@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:watersec_mobileapp_front/constants/app_bar.dart';
-import 'package:watersec_mobileapp_front/constants/drawer.dart';
-import 'package:watersec_mobileapp_front/constants/languagedrop_button.dart';
-import 'package:watersec_mobileapp_front/constants/phonenumber_ddbtn.dart';
-import 'package:watersec_mobileapp_front/constants/text_field.dart';
+import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
+import 'package:watersec_mobileapp_front/View/components/drawer.dart';
+import 'package:watersec_mobileapp_front/View/components/languagedrop_button.dart';
+import 'package:watersec_mobileapp_front/View/components/phonenumber_ddbtn.dart';
+import 'package:watersec_mobileapp_front/View/components/text_field.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -172,7 +172,7 @@ class _ProfileState extends State<Profile> {
                           phoneCodes: phoneCodesList,
                           selectedPhoneCode: selectedPhone),
                       SizedBox(
-                        width: 257,
+                        width: 251.5,
                         child: TextFormField(
                           style:
                               TextStyle(color: Color.fromRGBO(90, 90, 90, 1)),

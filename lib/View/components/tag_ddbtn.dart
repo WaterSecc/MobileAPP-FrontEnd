@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class MyTagDropDownBtn extends StatefulWidget {
   final List<String> selectedTags;
   final Function(String) onTagSelected;
+  final String selectedTag;
 
   const MyTagDropDownBtn({
     required this.selectedTags,
-    required this.onTagSelected,
+    required this.onTagSelected, 
+    required this.selectedTag,
   });
 
   @override
@@ -15,12 +17,12 @@ class MyTagDropDownBtn extends StatefulWidget {
 
 class _MyTagDropDownBtnState extends State<MyTagDropDownBtn> {
   List<String> selectedTags = [];
-  String? selectedTag;
+  String? selectedTag = 'Filtrer par tag';
 
   @override
   void initState() {
     super.initState();
-    selectedTag = 'Filtrer par tag';
+    selectedTag = widget.selectedTag;
   }
 
   @override

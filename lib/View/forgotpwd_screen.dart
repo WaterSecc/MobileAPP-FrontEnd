@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:watersec_mobileapp_front/screens/login_screen.dart';
+import 'package:watersec_mobileapp_front/View/login_screen.dart';
 
 class ForgotPwd extends StatefulWidget {
   const ForgotPwd({super.key});

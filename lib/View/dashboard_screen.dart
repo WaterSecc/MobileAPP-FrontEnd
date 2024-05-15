@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:watersec_mobileapp_front/constants/app_bar.dart';
-import 'package:watersec_mobileapp_front/constants/circulardesign.dart';
-import 'package:watersec_mobileapp_front/constants/drawer.dart';
-import 'package:watersec_mobileapp_front/constants/languagedrop_button.dart';
+import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
+import 'package:watersec_mobileapp_front/View/components/circulardesign.dart';
+import 'package:watersec_mobileapp_front/View/components/drawer.dart';
+import 'package:watersec_mobileapp_front/View/components/languagedrop_button.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:watersec_mobileapp_front/constants/filled_button.dart';
-import 'package:watersec_mobileapp_front/constants/text_field.dart';
+import 'package:watersec_mobileapp_front/View/components/filled_button.dart';
+import 'package:watersec_mobileapp_front/View/components/text_field.dart';
 
 class ChangePwd extends StatefulWidget {
   const ChangePwd({super.key});

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:watersec_mobileapp_front/constants/app_bar.dart';
-import 'package:watersec_mobileapp_front/constants/calendarpicker.dart';
-import 'package:watersec_mobileapp_front/constants/circulardesign.dart';
-import 'package:watersec_mobileapp_front/constants/dateselection_container.dart';
-import 'package:watersec_mobileapp_front/constants/drawer.dart';
-import 'package:watersec_mobileapp_front/constants/tag_ddbtn.dart';
-import 'package:watersec_mobileapp_front/constants/text_button.dart';
-import 'package:watersec_mobileapp_front/screens/custompopup.dart';
+import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
+import 'package:watersec_mobileapp_front/View/components/circulardesign.dart';
+import 'package:watersec_mobileapp_front/View/components/dateselection_container.dart';
+import 'package:watersec_mobileapp_front/View/components/drawer.dart';
+import 'package:watersec_mobileapp_front/View/custompopup.dart';
 
 class Analyses extends StatefulWidget {
   const Analyses({Key? key}) : super(key: key);

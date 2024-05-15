@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:watersec_mobileapp_front/constants/text_field.dart';
-import 'package:watersec_mobileapp_front/screens/forgotpwd_screen.dart';
+import 'package:watersec_mobileapp_front/View/components/text_field.dart';
+import 'package:watersec_mobileapp_front/View/forgotpwd_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

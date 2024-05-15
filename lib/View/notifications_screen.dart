@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:watersec_mobileapp_front/constants/app_bar.dart';
-import 'package:watersec_mobileapp_front/constants/drawer.dart';
+import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
+import 'package:watersec_mobileapp_front/View/components/drawer.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({super.key});

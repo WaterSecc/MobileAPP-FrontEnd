@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:watersec_mobileapp_front/constants/dateselection_container.dart';
-import 'package:watersec_mobileapp_front/constants/tag_ddbtn.dart';
-import 'package:watersec_mobileapp_front/constants/text_button.dart';
+import 'package:watersec_mobileapp_front/View/components/dateselection_container.dart';
+import 'package:watersec_mobileapp_front/View/components/tag_ddbtn.dart';
+import 'package:watersec_mobileapp_front/View/components/text_button.dart';
 
 class CustomPopup extends StatefulWidget {
   final Function(List<String>) onFiltersSelected;
@@ -25,6 +25,7 @@ class _CustomPopupState extends State<CustomPopup>
   bool _isTagContainerOpen = false;
   bool _isDateContainerOpen = false;
   List<String> selectedTags = [];
+  String selectedTag = 'Filtrer par tag';
   DateTime _selectedDate1 = DateTime.now();
   DateTime _selectedDate2 = DateTime.now();
 
@@ -124,6 +125,7 @@ class _CustomPopupState extends State<CustomPopup>
                   ),
                   SizedBox(height: 2),
                   MyTagDropDownBtn(
+                    selectedTag: selectedTag,
                     selectedTags: selectedTags,
                     onTagSelected: _toggleTag,
                   ),

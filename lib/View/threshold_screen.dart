@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:watersec_mobileapp_front/constants/text_button.dart';
-import 'package:watersec_mobileapp_front/constants/text_field.dart';
+import 'package:watersec_mobileapp_front/View/components/qrcode_btn.dart';
+import 'package:watersec_mobileapp_front/View/components/text_button.dart';
+import 'package:watersec_mobileapp_front/View/components/text_field.dart';
 
 class ThresholdScreen extends StatefulWidget {
   const ThresholdScreen({super.key});
