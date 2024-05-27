@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:watersec_mobileapp_front/screens/analyses_screen.dart';
-import 'package:watersec_mobileapp_front/screens/changepassword_screen.dart';
-import 'package:watersec_mobileapp_front/screens/dashboard_screen.dart';
-import 'package:watersec_mobileapp_front/screens/dashboardplus_screen.dart';
-import 'package:watersec_mobileapp_front/screens/forgotpwd_screen.dart';
-import 'package:watersec_mobileapp_front/screens/login_screen.dart';
-import 'package:watersec_mobileapp_front/screens/notifications_screen.dart';
-import 'package:watersec_mobileapp_front/screens/profile_screen.dart';
-import 'package:watersec_mobileapp_front/screens/settings_screen.dart';
-import 'package:watersec_mobileapp_front/screens/splash_screen.dart';
+import 'package:watersec_mobileapp_front/View/analyses_screen.dart';
+import 'package:watersec_mobileapp_front/View/changepassword_screen.dart';
+import 'package:watersec_mobileapp_front/View/dashboardplus_screen.dart';
+import 'package:watersec_mobileapp_front/View/forgotpwd_screen.dart';
+import 'package:watersec_mobileapp_front/View/login_screen.dart';
+import 'package:watersec_mobileapp_front/View/notifications_screen.dart';
+import 'package:watersec_mobileapp_front/View/splash_screen.dart';
+import 'package:watersec_mobileapp_front/View/dashboard_screen.dart';
+import 'package:watersec_mobileapp_front/View/profile_screen.dart';
+import 'package:watersec_mobileapp_front/View/settings_screen.dart';
+import 'package:watersec_mobileapp_front/theme/appThemes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,11 +23,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'WaterSec',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromRGBO(51, 132, 198, 1)),
-        useMaterial3: true,
-      ),
+      theme: MyAppThemes.lightTheme, 
+      darkTheme: MyAppThemes.darkTheme,
+      themeMode: ThemeMode.system,
       home: SplashScreen(),
       routes: {
         '/login': (context) => Login(),
