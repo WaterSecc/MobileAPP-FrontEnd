@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/filled_button.dart';
 import 'package:watersec_mobileapp_front/View/components/text_field.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
@@ -26,7 +28,7 @@ class _ChangePwdState extends State<ChangePwd> {
                 width: 15,
               ),
               Text(
-                'Changer Mot De Passe',
+                AppLocale.ChangePwd.getString(context),
                 style: TextStyles.appBarHeaderStyle(
                   Theme.of(context).colorScheme.secondary,
                 ),
@@ -45,23 +47,23 @@ class _ChangePwdState extends State<ChangePwd> {
                 SizedBox(
                     height: 44,
                     width: 251,
-                    child: MyTextField(hint: 'Ancien Mot De Passe')),
+                    child: MyTextField(hint: AppLocale.OldPwd.getString(context))),
                 SizedBox(height: 15),
                 SizedBox(
                     height: 44,
                     width: 251,
-                    child: MyTextField(hint: 'Nouveau Mot De Passe')),
+                    child: MyTextField(hint: AppLocale.NewPwd.getString(context))),
                 SizedBox(height: 15),
                 SizedBox(
                     height: 44,
                     width: 251,
-                    child: MyTextField(hint: 'Confirmer Mot De Passe')),
+                    child: MyTextField(hint: AppLocale.ConfirmPwd.getString(context))),
                 SizedBox(height: 35),
                 SizedBox(
                     height: 37,
                     width: 195,
                     child: MyFilledButton(
-                      text: 'Enregistrer',
+                      text: AppLocale.Save.getString(context),
                       onPressed: () {},
                     )),
               ],

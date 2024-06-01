@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:theme_provider/theme_provider.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/languagedrop_button.dart';
 import 'package:watersec_mobileapp_front/View/components/themeSwitch.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
@@ -12,18 +15,6 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  ThemeMode _themeMode = ThemeMode.system;
-
-  void _toggleTheme(ThemeMode themeMode) {
-    setState(() {
-      _themeMode = themeMode;
-      // Update the app's theme
-      Theme.of(context).brightness == Brightness.dark
-          ? ThemeData.light()
-          : ThemeData.dark();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -41,7 +32,7 @@ class _MyDrawerState extends State<MyDrawer> {
           Container(
             padding: EdgeInsets.only(left: 20),
             child: Text(
-              'Général',
+              AppLocale.General.getString(context),
               style: TextStyles.MenuHeaderStyle(
                 Theme.of(context).colorScheme.secondary,
               ),
@@ -58,49 +49,49 @@ class _MyDrawerState extends State<MyDrawer> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
               title: Text(
-                'Dashboard',
+                AppLocale.Dashboard.getString(context),
                 style: TextStyles.ListHeaderStyle(
                   Theme.of(context).colorScheme.secondary,
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/dashboard');
+                Navigator.pushReplacementNamed(context, '/dashboard');
               },
             ),
           ),
           Container(
-            padding: EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 27),
             child: ListTile(
               leading: Icon(
                 FontAwesomeIcons.chartPie,
                 color: Theme.of(context).colorScheme.secondary,
               ),
               title: Text(
-                'Analyses',
+                AppLocale.Analysis.getString(context),
                 style: TextStyles.ListHeaderStyle(
                   Theme.of(context).colorScheme.secondary,
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/analyses');
+                Navigator.pushReplacementNamed(context, '/analyses');
               },
             ),
           ),
           Container(
-            padding: EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 27),
             child: ListTile(
               leading: Icon(
                 FontAwesomeIcons.solidBell,
                 color: Theme.of(context).colorScheme.secondary,
               ),
               title: Text(
-                'Notifications',
+                AppLocale.Notifications.getString(context),
                 style: TextStyles.ListHeaderStyle(
                   Theme.of(context).colorScheme.secondary,
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/notifications');
+                Navigator.pushReplacementNamed(context, '/notifications');
               },
             ),
           ),
@@ -115,9 +106,9 @@ class _MyDrawerState extends State<MyDrawer> {
             height: 5,
           ),
           Container(
-            padding: EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 27),
             child: Text(
-              'Gestion',
+              AppLocale.Management.getString(context),
               style: TextStyles.MenuHeaderStyle(
                 Theme.of(context).colorScheme.secondary,
               ),
@@ -127,25 +118,25 @@ class _MyDrawerState extends State<MyDrawer> {
             height: 20,
           ),
           Container(
-            padding: EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 27),
             child: ListTile(
               leading: Icon(
                 FontAwesomeIcons.cog,
                 color: Theme.of(context).colorScheme.secondary,
               ),
               title: Text(
-                'Paramètres',
+                AppLocale.Settings.getString(context),
                 style: TextStyles.ListHeaderStyle(
                   Theme.of(context).colorScheme.secondary,
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/parametres');
+                Navigator.pushReplacementNamed(context, '/parametres');
               },
             ),
           ),
           Container(
-            padding: EdgeInsets.only(left: 30),
+            padding: EdgeInsets.only(left: 27),
             child: ListTile(
               leading: Icon(
                 FontAwesomeIcons.globe,
@@ -154,22 +145,37 @@ class _MyDrawerState extends State<MyDrawer> {
               title: MyDropdownMenu(),
             ),
           ),
-          /*ThemeSwitch(
-            currentThemeMode: _themeMode,
-            onThemeChanged: _toggleTheme,
-          ),*/
+          Container(
+            padding: EdgeInsets.only(left: 27),
+            child: ListTile(
+              leading: const Icon(Icons.brightness_4),
+              title: Text(
+                AppLocale.AppTheme.getString(context),
+                style: TextStyles.ListHeaderStyle(
+                  Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              onTap: () {
+                // Get a reference to the ThemeProvider
+                final themeProvider = ThemeProvider.controllerOf(context);
+
+                // Toggle the theme
+                themeProvider.nextTheme();
+              },
+            ),
+          ),
           SizedBox(
-            height: 60,
+            height: 30,
           ),
           Container(
-            padding: EdgeInsets.only(left: 70),
+            padding: EdgeInsets.only(left: 42),
             child: ListTile(
               leading: Icon(
                 FontAwesomeIcons.signOut,
                 color: Theme.of(context).colorScheme.secondary,
               ),
               title: Text(
-                'Logout',
+                AppLocale.Logout.getString(context),
                 style: TextStyles.ListHeaderStyle(
                   Theme.of(context).colorScheme.secondary,
                 ),

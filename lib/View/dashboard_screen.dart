@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
 import 'package:watersec_mobileapp_front/View/components/circulardesign.dart';
 import 'package:watersec_mobileapp_front/View/components/drawer.dart';
@@ -21,7 +23,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  late String _page = 'Tableau De Bord';
+  late String _page = AppLocale.Dashboard.getString(context);
   final DateTime currentTime = DateTime.now();
   final DateFormat hourFormat = DateFormat('hh');
   final DateFormat amPmFormat = DateFormat('a');
@@ -40,7 +42,8 @@ class _DashboardState extends State<Dashboard> {
             child: Stack(
               children: [
                 MyCircularDesign(
-                    consommationtxt: 'Consommation totale d’aujourd’hui:',
+                    consommationtxt:
+                        AppLocale.Consommationtoday.getString(context),
                     consommationInt: 137.64,
                     chaud: 25.09,
                     froid: 25.09),
@@ -62,7 +65,7 @@ class _DashboardState extends State<Dashboard> {
                         Container(
                           padding: EdgeInsets.only(top: 70),
                           child: Text(
-                            '-27.0% que la moyenne',
+                            '-27.0% ' + AppLocale.Moyenne.getString(context),
                             style: TextStyles.subtitle3Style(
                               Theme.of(context).colorScheme.secondary,
                             ),
@@ -90,7 +93,7 @@ class _DashboardState extends State<Dashboard> {
                       child: Column(
                         children: [
                           Text(
-                            'Consommation du trimestre en cours',
+                            AppLocale.ConsommationTrim.getString(context),
                             style: TextStyles.subtitle3Style(
                               Theme.of(context).colorScheme.secondary,
                             ),
@@ -114,7 +117,8 @@ class _DashboardState extends State<Dashboard> {
                               ),
                               Container(
                                 child: Text(
-                                  '-27.0% que la moyenne',
+                                  '-27.0% ' +
+                                      AppLocale.Moyenne.getString(context),
                                   style: TextStyles.subtitle4Style(
                                     Theme.of(context).colorScheme.secondary,
                                   ),
@@ -163,13 +167,16 @@ class _DashboardState extends State<Dashboard> {
                               Row(
                                 children: [
                                   SizedBox(
-                                    width: 10,
+                                    width: 15,
                                   ),
                                   Text(
-                                    'Frais Total:   ',
+                                    AppLocale.FraisT.getString(context),
                                     style: TextStyles.subtitle2Style(
                                       Theme.of(context).colorScheme.secondary,
                                     ),
+                                  ),
+                                  SizedBox(
+                                    width: 6,
                                   ),
                                   Text(
                                     '3.015 TND',
@@ -182,10 +189,13 @@ class _DashboardState extends State<Dashboard> {
                               Row(
                                 children: [
                                   Text(
-                                    'Frais SONEDE:  ',
+                                    AppLocale.FraisS.getString(context),
                                     style: TextStyles.subtitle5Style(
                                       Theme.of(context).colorScheme.secondary,
                                     ),
+                                  ),
+                                  SizedBox(
+                                    width: 6,
                                   ),
                                   Text(
                                     '1 TND',
@@ -198,13 +208,16 @@ class _DashboardState extends State<Dashboard> {
                               Row(
                                 children: [
                                   SizedBox(
-                                    width: 10,
+                                    width: 7,
                                   ),
                                   Text(
-                                    'Frais ONAS:  ',
+                                    AppLocale.FraisO.getString(context),
                                     style: TextStyles.subtitle5Style(
                                       Theme.of(context).colorScheme.secondary,
                                     ),
+                                  ),
+                                  SizedBox(
+                                    width: 6,
                                   ),
                                   Text(
                                     '2.015 TND',
@@ -217,7 +230,7 @@ class _DashboardState extends State<Dashboard> {
                             ],
                           ),
                           SizedBox(
-                            width: 30,
+                            width: 20,
                           ),
                           WaterLevelIndicator(
                             waterLevel: 0.5, // Water level between 0.0 and 1.0
@@ -259,17 +272,19 @@ class _DashboardState extends State<Dashboard> {
                               SizedBox(
                                 width: 10,
                               ),
-                              Text('Consommation',
+                              Text(AppLocale.Consommation.getString(context),
                                   style: TextStyles.subtitle2Style(
                                     Theme.of(context).colorScheme.secondary,
                                   )),
                               SizedBox(
-                                width: 40,
+                                width: 57,
                               ),
                               SizedBox(
                                   height: 40,
                                   child: MyTxtBtnNotOutlined(
-                                    text: 'Plus de détails  >',
+                                    text: AppLocale.PlusDetails.getString(
+                                            context) +
+                                        ' >',
                                     onPressed: () {
                                       Navigator.pushNamed(
                                           context, '/dashboardplus');

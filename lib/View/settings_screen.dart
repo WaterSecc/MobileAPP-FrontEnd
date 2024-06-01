@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
 import 'package:watersec_mobileapp_front/View/components/drawer.dart';
 import 'package:watersec_mobileapp_front/View/components/text_button.dart';
@@ -17,7 +19,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
-    late final String _page = 'Paramètres';
+    late final String _page = AppLocale.Management.getString(context);
     return Container(
       decoration:  BoxDecoration(color:Theme.of(context).colorScheme.background,),
       child: Scaffold(

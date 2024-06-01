@@ -38,7 +38,6 @@ class TextStyles {
     );
   }
 
-
   static TextStyle Header1Style(Color color) {
     return TextStyle(
       fontFamily: 'Montserrat',

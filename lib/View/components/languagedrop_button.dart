@@ -1,5 +1,6 @@
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
 class MyDropdownMenu extends StatefulWidget {
@@ -8,48 +9,34 @@ class MyDropdownMenu extends StatefulWidget {
 }
 
 class _MyDropdownMenuState extends State<MyDropdownMenu> {
-  late String selectedLanguage = 'Français';
+  late FlutterLocalization _flutterLocalization;
+  late String _currentLocale;
+
+  @override
+  void initState() {
+    super.initState();
+    _flutterLocalization = FlutterLocalization.instance;
+    _currentLocale = _flutterLocalization.currentLocale!.languageCode;
+    print(_currentLocale);
+  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
-        value: selectedLanguage,
+        value: _currentLocale,
         hint: Text(
-          selectedLanguage,
+          _currentLocale,
           style: TextStyles.ListHeaderStyle(
             Theme.of(context).colorScheme.secondary,
           ),
         ),
-        onChanged: (String? newValue) {
-          setState(() {
-            selectedLanguage = newValue!;
-          });
+        onChanged: (value) {
+          _setLocale(value);
         },
         items: <DropdownMenuItem<String>>[
           DropdownMenuItem<String>(
-            value: 'Français',
-            child: Row(
-              children: [
-                CountryFlag.fromCountryCode(
-                  'FR',
-                  height: 19,
-                  width: 19,
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  'Français',
-                  style: TextStyles.ListHeaderStyle(
-                    Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          DropdownMenuItem<String>(
-            value: 'Anglais',
+            value: 'en',
             child: Row(
               children: [
                 CountryFlag.fromCountryCode(
@@ -61,7 +48,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                   width: 4,
                 ),
                 Text(
-                  'Anglais',
+                  'English',
                   style: TextStyles.ListHeaderStyle(
                     Theme.of(context).colorScheme.secondary,
                   ),
@@ -70,7 +57,28 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
             ),
           ),
           DropdownMenuItem<String>(
-            value: 'Allemand',
+            value: 'fr',
+            child: Row(
+              children: [
+                CountryFlag.fromCountryCode(
+                  'FR',
+                  height: 19,
+                  width: 19,
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  'French',
+                  style: TextStyles.ListHeaderStyle(
+                    Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          DropdownMenuItem<String>(
+            value: 'de',
             child: Row(
               children: [
                 CountryFlag.fromCountryCode(
@@ -82,7 +90,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                   width: 4,
                 ),
                 Text(
-                  'Allemand',
+                  'German',
                   style: TextStyles.ListHeaderStyle(
                     Theme.of(context).colorScheme.secondary,
                   ),
@@ -93,5 +101,21 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
         ],
       ),
     );
+  }
+
+  void _setLocale(String? value) {
+    if (value == null) return;
+    if (value == 'en') {
+      _flutterLocalization.translate('en');
+    } else if (value == 'fr') {
+      _flutterLocalization.translate('fr');
+    } else if (value == 'de') {
+      _flutterLocalization.translate('de');
+    } else {
+      return;
+    }
+    setState(() {
+      _currentLocale = value;
+    });
   }
 }
