@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/colors.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
@@ -85,13 +87,13 @@ class _MyCircularDesignState extends State<MyCircularDesign> {
               height: _selectedCircleIndex == 1 ? 190 + _circleSizeDelta : 175,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color.fromRGBO(51, 132, 198, 1),
+                color: blue,
               ),
               child: Column(
                 children: [
                   SizedBox(height: 60),
                   Text(
-                    'Froid:',
+                    AppLocale.Froid.getString(context),
                     style: TextStyles.subtitle1Style(white),
                   ),
                   Text(
@@ -125,7 +127,7 @@ class _MyCircularDesignState extends State<MyCircularDesign> {
                 children: [
                   SizedBox(height: 60),
                   Text(
-                    'Chaud:',
+                    AppLocale.Chaud.getString(context),
                     style: TextStyles.subtitle1Style(white),
                   ),
                   Text(

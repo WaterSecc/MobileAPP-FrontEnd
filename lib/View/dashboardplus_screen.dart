@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/date_navbutton.dart';
 import 'package:watersec_mobileapp_front/colors.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
@@ -26,7 +28,7 @@ class _DashPlusState extends State<DashPlus> {
                 width: 15,
               ),
               Text(
-                'Consommation',
+                AppLocale.Consommation.getString(context),
                 style: TextStyles.appBarHeaderStyle(
                   Theme.of(context).colorScheme.secondary,
                 ),
@@ -48,7 +50,7 @@ class _DashPlusState extends State<DashPlus> {
                     width: 15,
                   ),
                   Text(
-                    'Points Clés',
+                    AppLocale.Highlights.getString(context),
                     style: TextStyles.subtitle2Style(
                       Theme.of(context).colorScheme.secondary,
                     ),
@@ -81,11 +83,13 @@ class _DashPlusState extends State<DashPlus> {
                             width: 10,
                             height: 7,
                           ),
-                          Text(
-                            'Jusqu\'à présent, vous utilisez moins d\'eau\n'
-                            'que d\'habitude.',
-                            style: TextStyles.subtitle5Style(
-                              Theme.of(context).colorScheme.secondary,
+                          SizedBox(
+                            width: 323,
+                            child: Text(
+                              AppLocale.HighlightParagraph.getString(context),
+                              style: TextStyles.subtitle5Style(
+                                Theme.of(context).colorScheme.secondary,
+                              ),
                             ),
                           )
                         ],
@@ -118,11 +122,13 @@ class _DashPlusState extends State<DashPlus> {
                             width: 10,
                             height: 7,
                           ),
-                          Text(
-                            'En moyenne, vous utilisez moins d\'eau cette\n'
-                            'année que l\'année dernière.',
-                            style: TextStyles.subtitle5Style(
-                              Theme.of(context).colorScheme.secondary,
+                          SizedBox(
+                            width: 323,
+                            child: Text(
+                              AppLocale.HighlightParagraph2.getString(context),
+                              style: TextStyles.subtitle5Style(
+                                Theme.of(context).colorScheme.secondary,
+                              ),
                             ),
                           )
                         ],

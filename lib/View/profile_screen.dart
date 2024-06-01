@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
 import 'package:watersec_mobileapp_front/View/components/drawer.dart';
 import 'package:watersec_mobileapp_front/View/components/filled_button.dart';
@@ -18,7 +20,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  late String _page = 'Profil';
+  late String _page = AppLocale.Profile.getString(context);
   final List<String> phoneCodesList = [
     '+ 20',
     '+ 33',
@@ -98,12 +100,16 @@ class _ProfileState extends State<Profile> {
                   SizedBox(
                       width: 160,
                       height: 44,
-                      child: MyTextField(hint: 'Prénom')),
+                      child:
+                          MyTextField(hint: AppLocale.Name.getString(context))),
                   SizedBox(
                     width: 7,
                   ),
                   SizedBox(
-                      width: 160, height: 44, child: MyTextField(hint: 'Nom')),
+                      width: 160,
+                      height: 44,
+                      child: MyTextField(
+                          hint: AppLocale.LastName.getString(context))),
                 ],
               ),
               SizedBox(
@@ -112,14 +118,15 @@ class _ProfileState extends State<Profile> {
               SizedBox(
                   width: 327,
                   height: 44,
-                  child: MyTextField(hint: 'Adresse e-mail')),
+                  child: MyTextField(hint: AppLocale.Email.getString(context))),
               SizedBox(
                 height: 15,
               ),
               SizedBox(
                   width: 327,
                   height: 44,
-                  child: MyTextField(hint: 'Nom d’Entreprise')),
+                  child:
+                      MyTextField(hint: AppLocale.Company.getString(context))),
               SizedBox(
                 height: 15,
               ),
@@ -131,7 +138,8 @@ class _ProfileState extends State<Profile> {
                   SizedBox(
                       width: 160,
                       height: 44,
-                      child: MyTextField(hint: 'Nombre Employés')),
+                      child: MyTextField(
+                          hint: AppLocale.Employees.getString(context))),
                   SizedBox(
                     width: 7,
                   ),
@@ -190,7 +198,7 @@ class _ProfileState extends State<Profile> {
                                 color: Theme.of(context).colorScheme.background,
                               ),
                             ),
-                            hintText: 'Numéro Téléphone',
+                            hintText: AppLocale.PhoneNumber.getString(context),
                             hintStyle: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                               fontFamily: 'Montserrat',
@@ -219,14 +227,16 @@ class _ProfileState extends State<Profile> {
                   SizedBox(
                       width: 160,
                       height: 44,
-                      child: MyTextField(hint: 'Position')),
+                      child: MyTextField(
+                          hint: AppLocale.Position.getString(context))),
                   SizedBox(
                     width: 7,
                   ),
                   SizedBox(
                       width: 160,
                       height: 44,
-                      child: MyTextField(hint: 'Code Postale')),
+                      child: MyTextField(
+                          hint: AppLocale.ZIPCode.getString(context))),
                 ],
               ),
               SizedBox(
@@ -236,7 +246,9 @@ class _ProfileState extends State<Profile> {
                 child: SizedBox(
                   width: 207,
                   height: 38,
-                  child: MyFilledButton(text: 'Enregistrer', onPressed: () {}),
+                  child: MyFilledButton(
+                      text: AppLocale.Save.getString(context),
+                      onPressed: () {}),
                 ),
               ),
               Row(
@@ -248,7 +260,7 @@ class _ProfileState extends State<Profile> {
                     onPressed: () {
                       Navigator.pushNamed(context, '/changepwd');
                     },
-                    text: 'Changer Mot De Passe',
+                    text: AppLocale.ChangePwd.getString(context),
                   ),
                 ],
               ),

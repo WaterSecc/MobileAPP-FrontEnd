@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
 import 'package:watersec_mobileapp_front/View/components/circulardesign.dart';
 import 'package:watersec_mobileapp_front/View/components/dateselection_container.dart';
@@ -17,7 +19,7 @@ class Analyses extends StatefulWidget {
 }
 
 class _AnalysesState extends State<Analyses> {
-  late final String _page = 'Analyses';
+  late final String _page = AppLocale.Analysis.getString(context);
   List<String> selectedTags = [];
   DateTime? _selectedDate1;
   DateTime? _selectedDate2;
@@ -133,7 +135,8 @@ class _AnalysesState extends State<Analyses> {
                 Container(
                   margin: EdgeInsets.only(top: 65),
                   child: MyCircularDesign(
-                      consommationtxt: 'Consommation totale:',
+                      consommationtxt:
+                          AppLocale.ConsommationTotal.getString(context) + ':',
                       consommationInt: 9.93,
                       chaud: 6.84,
                       froid: 3.09),
@@ -156,7 +159,9 @@ class _AnalysesState extends State<Analyses> {
                       child: Column(
                         children: [
                           Text(
-                            'Consommation moyenne par jour',
+                            AppLocale.ConsommationMoyenne.getString(context) +
+                                ' ' +
+                                AppLocale.PerDay.getString(context),
                             style: TextStyles.subtitle5Style(
                               Theme.of(context).colorScheme.secondary,
                             ),
@@ -187,7 +192,9 @@ class _AnalysesState extends State<Analyses> {
                                 width: 5,
                               ),
                               Text(
-                                'Froid: ' + '526.18 Litres',
+                                AppLocale.Froid.getString(context) +
+                                    ': ' +
+                                    '526.18 Litres',
                                 style: TextStyles.subtitle6Style(
                                   Theme.of(context).colorScheme.secondary,
                                 ),
@@ -207,7 +214,9 @@ class _AnalysesState extends State<Analyses> {
                                 width: 5,
                               ),
                               Text(
-                                'Chaud: ' + '526.18 Litres',
+                                AppLocale.Chaud.getString(context) +
+                                    ': ' +
+                                    '526.18 Litres',
                                 style: TextStyles.subtitle6Style(
                                   Theme.of(context).colorScheme.secondary,
                                 ),
@@ -223,7 +232,7 @@ class _AnalysesState extends State<Analyses> {
                   top: 580,
                   left: 30,
                   child: SizedBox(
-                    width: 340,
+                    width: 343,
                     height: 100,
                     child: Container(
                       margin: EdgeInsets.only(top: 10, right: 7, left: 7),
@@ -237,7 +246,9 @@ class _AnalysesState extends State<Analyses> {
                       child: Column(
                         children: [
                           Text(
-                            'Consommation moyenne par utilisation',
+                            AppLocale.ConsommationMoyenne.getString(context) +
+                                ' ' +
+                                AppLocale.PerUse.getString(context),
                             style: TextStyles.subtitle5Style(
                               Theme.of(context).colorScheme.secondary,
                             ),
@@ -249,7 +260,7 @@ class _AnalysesState extends State<Analyses> {
                             ),
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 5,
                           ),
                           Row(
                             children: [
@@ -268,7 +279,9 @@ class _AnalysesState extends State<Analyses> {
                                 width: 5,
                               ),
                               Text(
-                                'Froid: ' + '1.98  Litres',
+                                AppLocale.Froid.getString(context) +
+                                    ': ' +
+                                    '1.98  Litres',
                                 style: TextStyles.subtitle6Style(
                                   Theme.of(context).colorScheme.secondary,
                                 ),
@@ -288,7 +301,9 @@ class _AnalysesState extends State<Analyses> {
                                 width: 5,
                               ),
                               Text(
-                                'Chaud: ' + '1.36 Litres',
+                                AppLocale.Chaud.getString(context) +
+                                    ': ' +
+                                    '1.36 Litres',
                                 style: TextStyles.subtitle6Style(
                                   Theme.of(context).colorScheme.secondary,
                                 ),

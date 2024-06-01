@@ -53,24 +53,27 @@ class _WaterLevelIndicatorState extends State<WaterLevelIndicator>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _waterLevelAnimation,
-      builder: (context, child) {
-        return CustomPaint(
-          painter: WaterLevelPainter(
-            waterLevel: _waterLevelAnimation.value,
-            backgroundColor: widget.backgroundColor,
-            waterColor: widget.waterColor,
-            text: widget.text,
-            textStyle: widget.textStyle,
-            strokeWidth: widget.strokeWidth,
-          ),
-          child: SizedBox(
-            width: 75,
-            height: 75,
-          ),
-        );
-      },
+    return Container(
+      margin: EdgeInsets.only(left: 5),
+      child: AnimatedBuilder(
+        animation: _waterLevelAnimation,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: WaterLevelPainter(
+              waterLevel: _waterLevelAnimation.value,
+              backgroundColor: widget.backgroundColor,
+              waterColor: widget.waterColor,
+              text: widget.text,
+              textStyle: widget.textStyle,
+              strokeWidth: widget.strokeWidth,
+            ),
+            child: SizedBox(
+              width: 65,
+              height: 65,
+            ),
+          );
+        },
+      ),
     );
   }
 }

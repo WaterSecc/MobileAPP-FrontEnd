@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
-//import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 
 import 'package:watersec_mobileapp_front/classes/chart_class.dart';
 import 'package:watersec_mobileapp_front/colors.dart';
@@ -151,7 +152,7 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
                       backgroundColor: dayButtonColor,
                     ),
                     child: Text(
-                      'Day',
+                      AppLocale.Day.getString(context),
                       style: TextStyles.DatenavBtn(white),
                     ),
                   ),
@@ -166,7 +167,7 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
                       backgroundColor: monthButtonColor,
                     ),
                     child: Text(
-                      'Month',
+                      AppLocale.Month.getString(context),
                       style: TextStyles.DatenavBtn(white),
                     ),
                   ),
@@ -181,7 +182,7 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
                       backgroundColor: yearButtonColor,
                     ),
                     child: Text(
-                      'Year',
+                      AppLocale.Year.getString(context),
                       style: TextStyles.DatenavBtn(white),
                     ),
                   ),
@@ -213,7 +214,7 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
               Column(
                 children: [
                   Text(
-                    'Total 238 Litres',
+                    AppLocale.Total.getString(context)+' 238 Litres',
                     style: TextStyles.header5Style(
                       Theme.of(context).colorScheme.secondary,
                     ),
@@ -269,7 +270,7 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
                 ),
               ),
               title: ChartTitle(
-                text: 'Water Consumption',
+                text: AppLocale.WaterC.getString(context),
                 textStyle: TextStyles.subtitle5Style(
                   Theme.of(context).colorScheme.secondary,
                 ),

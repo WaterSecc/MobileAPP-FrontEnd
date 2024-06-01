@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/components/filled_button.dart';
 import 'package:watersec_mobileapp_front/View/components/text_field.dart';
 import 'package:watersec_mobileapp_front/View/forgotpwd_screen.dart';
@@ -41,7 +43,7 @@ class _LoginState extends State<Login> {
                   SizedBox(
                       width: 260,
                       height: 48,
-                      child: MyTextField(hint: 'Adresse e-mail')),
+                      child: MyTextField(hint: AppLocale.Email.getString(context))),
                   SizedBox(
                     height: 20,
                   ),
@@ -49,7 +51,8 @@ class _LoginState extends State<Login> {
                     width: 260,
                     height: 48,
                     child: MyTextField(
-                      hint: 'Mot De Passe',
+                      hint: AppLocale.Password.getString(context),
+                      
                     ),
                     /*prefixIcon: Visibility(
                           visible: true,
@@ -66,7 +69,7 @@ class _LoginState extends State<Login> {
                     width: 260,
                     height: 48,
                     child: MyFilledButton(
-                      text: 'SE CONNECTER',
+                      text: AppLocale.Seconnecter.getString(context),
                       onPressed: () {
                         Navigator.popAndPushNamed(context, '/dashboard');
                       },
@@ -83,7 +86,7 @@ class _LoginState extends State<Login> {
                         Navigator.popAndPushNamed(context, '/forgotpwd');
                       },
                       child: Text(
-                        'Mot De Passe Oublié?',
+                        AppLocale.Mdpoublie.getString(context),
                         style: TextStyles.subtitle2Style(blue),
                       ),
                     ),

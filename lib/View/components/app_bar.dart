@@ -49,7 +49,7 @@ class MyAppBar extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/profile');
+              Navigator.pushReplacementNamed(context, '/profile');
             },
             child: Container(
               width: 35,
