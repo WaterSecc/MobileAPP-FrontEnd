@@ -4,9 +4,12 @@ import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
 class MyFilledButton extends StatefulWidget {
   final String text;
-  final VoidCallback onPressed;
-  const MyFilledButton(
-      {super.key, required this.text, required this.onPressed});
+  final VoidCallback? onPressed;
+  const MyFilledButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+  });
 
   @override
   State<MyFilledButton> createState() => _MyFilledButtonState();
@@ -21,8 +24,9 @@ class _MyFilledButtonState extends State<MyFilledButton> {
         style: TextStyles.ListHeaderStyle(white),
       ),
       style: ButtonStyle(
-          backgroundColor:
-              MaterialStatePropertyAll<Color>(Theme.of(context).cardColor)),
+        backgroundColor: MaterialStatePropertyAll<Color>(
+            Theme.of(context).colorScheme.tertiaryFixed),
+      ),
       onPressed: widget.onPressed,
     );
   }

@@ -17,7 +17,8 @@ class _MyTextBtnState extends State<MyTextBtn> {
       onPressed: widget.onPressed,
       child: Text(
         widget.text,
-        style: TextStyles.ListHeaderStyle(Theme.of(context).colorScheme.secondary),
+        style:
+            TextStyles.ListHeaderStyle(Theme.of(context).colorScheme.secondary),
       ),
       style: ButtonStyle(
         backgroundColor: MaterialStatePropertyAll<Color>(
@@ -27,7 +28,9 @@ class _MyTextBtnState extends State<MyTextBtn> {
             MaterialStatePropertyAll<Color>(Theme.of(context).cardColor),
         side: MaterialStateProperty.all<BorderSide>(
           BorderSide(
-            color: Theme.of(context).cardColor, // Set the border color to blue
+            color: Theme.of(context)
+                .colorScheme
+                .tertiaryFixed, // Set the border color to blue
             width: 2.3, // Set the border width (adjust as needed)
           ),
         ),

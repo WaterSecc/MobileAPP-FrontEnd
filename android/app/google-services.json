@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "367471936568",
+    "project_id": "watersec-83dd2",
+    "storage_bucket": "watersec-83dd2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367471936568:android:961063f05e6a204fb092cd",
+        "android_client_info": {
+          "package_name": "com.istidama.watersec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367471936568-fk1i7p16vtjpd33ja5gavc1i543kgl4q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh1711Q6fXOI1dqyjwGWDvly-woSeEcys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367471936568-fk1i7p16vtjpd33ja5gavc1i543kgl4q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

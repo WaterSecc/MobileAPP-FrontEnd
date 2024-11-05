@@ -4,23 +4,55 @@ import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
 class MyTextField extends StatefulWidget {
   final String hint;
+  final void Function(String)? onChanged;
+  final String? Function(String?)? validator;
+  final String? value;
+  final bool? obscureText;
+  final TextEditingController? controller;
+  final bool showPasswordToggle;
 
-  const MyTextField({required this.hint, Key? key}) : super(key: key);
+  const MyTextField({
+    Key? key,
+    required this.hint,
+    this.onChanged,
+    this.validator,
+    this.value,
+    this.obscureText = false,
+    this.controller,
+    this.showPasswordToggle = false,
+  }) : super(key: key);
 
   @override
   State<MyTextField> createState() => _MyTextFieldState();
 }
 
 class _MyTextFieldState extends State<MyTextField> {
-  //bool _isTextFieldFocused = false;
+  @override
+  void initState() {
+    super.initState();
+    _isPasswordVisible = widget.obscureText ?? true;
+  }
+
+  bool _isPasswordVisible = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: widget.controller,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      keyboardType: TextInputType.text,
+      obscureText: _isPasswordVisible,
       style: TextStyle(
         color: Theme.of(context).colorScheme.secondary,
       ),
       decoration: InputDecoration(
         filled: true,
+        errorStyle: const TextStyle(fontSize: 9),
         fillColor: Theme.of(context).colorScheme.background,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
@@ -35,17 +67,31 @@ class _MyTextFieldState extends State<MyTextField> {
           ),
         ),
         hintText: widget.hint,
-        hintStyle: TextStyles.subtitle3Style(Theme.of(context).colorScheme.secondary,),
+        hintStyle: TextStyles.subtitle3Style(
+          Theme.of(context).colorScheme.secondary,
+        ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
         ),
+        suffixIcon: widget.showPasswordToggle
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              )
+            : null,
       ),
-      /*onChanged: (value) {
-        setState(() {
-          _isTextFieldFocused = value.isNotEmpty;
-        });
-      },*/
+      minLines: 1,
+      maxLines: 1,
+      onChanged: widget.onChanged,
+      validator: widget.validator,
     );
   }
 }

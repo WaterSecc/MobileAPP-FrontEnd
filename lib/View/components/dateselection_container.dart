@@ -5,14 +5,19 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:watersec_mobileapp_front/colors.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
+typedef DateRangeSelectedCallback = void Function(
+    DateTime startDate, DateTime endDate);
+
 class CalendarContainer extends StatefulWidget {
   final DateTime? selectedDate1;
   final DateTime? selectedDate2;
+  final DateRangeSelectedCallback onDateRangeSelected;
 
   const CalendarContainer({
     Key? key,
     required this.selectedDate1,
     required this.selectedDate2,
+    required this.onDateRangeSelected,
   }) : super(key: key);
 
   @override
@@ -27,8 +32,9 @@ class _CalendarContainerState extends State<CalendarContainer> {
   @override
   void initState() {
     super.initState();
-    _selectedDate1 = DateTime.now();
-    _selectedDate2 = DateTime.now().subtract(Duration(days: 30));
+    _selectedDate1 = widget.selectedDate1 ?? DateTime.now();
+    _selectedDate2 =
+        widget.selectedDate2 ?? DateTime.now().subtract(Duration(days: 30));
   }
 
   @override
@@ -38,43 +44,40 @@ class _CalendarContainerState extends State<CalendarContainer> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(
-              '${_selectedDate2 == DateTime(0) ? '' : dformat.format(_selectedDate1)}',
-              style: TextStyles.header5Style(
-                  Theme.of(context).colorScheme.secondary),
+            Container(
+              margin: EdgeInsets.all(10),
+              child: Text(
+                '${_selectedDate2 == DateTime(0) ? '' : dformat.format(_selectedDate1)}',
+                style: TextStyles.header5Style(
+                    Theme.of(context).colorScheme.secondary),
+              ),
             ),
-            SizedBox(
-              width: 3,
-            ),
-            InkWell(
+            /*InkWell(
               onTap: () {
                 _showDatePickerDialog(1);
               },
               child: Icon(FontAwesomeIcons.pen,
                   size: 16, color: Theme.of(context).colorScheme.secondary),
+            ),*/
+            Container(
+              margin: EdgeInsets.all(10),
+              child: Text(
+                '${dformat.format(_selectedDate2)}',
+                style: TextStyles.header5Style(
+                    Theme.of(context).colorScheme.secondary),
+              ),
             ),
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              '${dformat.format(_selectedDate2)}',
-              style: TextStyles.header5Style(
-                  Theme.of(context).colorScheme.secondary),
-            ),
-            SizedBox(
-              width: 3,
-            ),
-            InkWell(
+            /*InkWell(
               onTap: () {
                 _showDatePickerDialog(2);
               },
               child: Icon(FontAwesomeIcons.pen,
                   size: 16, color: Theme.of(context).colorScheme.secondary),
-            ),
+            ),*/
           ],
         ),
         Container(
-          margin: EdgeInsets.all(10),
+          margin: EdgeInsets.all(2),
           child: TableCalendar(
             calendarStyle: CalendarStyle(
               todayTextStyle: TextStyles.subtitle6Style(
@@ -87,9 +90,11 @@ class _CalendarContainerState extends State<CalendarContainer> {
                   Theme.of(context).colorScheme.secondary),
               disabledTextStyle: TextStyles.subtitle6Style(gray),
               selectedDecoration: BoxDecoration(
-                  color: Theme.of(context).cardColor, shape: BoxShape.circle),
+                  color: Theme.of(context).colorScheme.tertiaryFixed,
+                  shape: BoxShape.circle),
               todayDecoration: BoxDecoration(
-                  color: Theme.of(context).cardColor, shape: BoxShape.circle),
+                  color: Theme.of(context).colorScheme.tertiaryFixed,
+                  shape: BoxShape.circle),
             ),
             firstDay: DateTime.now().subtract(Duration(days: 365)),
             lastDay: DateTime.now(),
@@ -106,7 +111,14 @@ class _CalendarContainerState extends State<CalendarContainer> {
                   _selectedDate2 = DateTime(0);
                 } else {
                   _selectedDate2 = selectedDay;
+                  if (_selectedDate1.isAfter(_selectedDate2)) {
+                    // Swap dates if the start date is after the end date
+                    final temp = _selectedDate1;
+                    _selectedDate1 = _selectedDate2;
+                    _selectedDate2 = temp;
+                  }
                 }
+                widget.onDateRangeSelected(_selectedDate1, _selectedDate2);
               });
             },
           ),
@@ -134,6 +146,7 @@ class _CalendarContainerState extends State<CalendarContainer> {
         } else {
           _selectedDate2 = selectedDate;
         }
+        widget.onDateRangeSelected(_selectedDate1, _selectedDate2);
       });
     }
   }

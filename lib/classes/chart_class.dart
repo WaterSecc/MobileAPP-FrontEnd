@@ -1,7 +1,7 @@
-class ChartData {
-   String category;
-  int coldLiters;
-  int hotLiters;
+class ChartDataBar {
+   String date;
+  num coldLiters;
+  num hotLiters;
 
-  ChartData(this.category, this.coldLiters, this.hotLiters);
+  ChartDataBar(this.date, this.coldLiters, this.hotLiters);
 }

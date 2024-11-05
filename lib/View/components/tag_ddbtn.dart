@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
 class MyTagDropDownBtn extends StatefulWidget {
   final List<String> selectedTags;
   final Function(String) onTagSelected;
   final String selectedTag;
+  final List<String> devicesList;
 
   const MyTagDropDownBtn({
     required this.selectedTags,
     required this.onTagSelected,
     required this.selectedTag,
+    required this.devicesList,
   });
 
   @override
@@ -17,15 +21,6 @@ class MyTagDropDownBtn extends StatefulWidget {
 }
 
 class _MyTagDropDownBtnState extends State<MyTagDropDownBtn> {
-  List<String> selectedTags = [];
-  String? selectedTag = 'Filtrer par tag';
-
-  @override
-  void initState() {
-    super.initState();
-    selectedTag = widget.selectedTag;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -41,66 +36,29 @@ class _MyTagDropDownBtnState extends State<MyTagDropDownBtn> {
             ),
             borderRadius: BorderRadius.all(Radius.circular(9)),
           ),
-          child: DropdownButtonFormField<String>(
-            value: selectedTag,
+          child: DropdownButton<String>(
+            value:
+                null, // Allow the dropdown to stay open for multiple selections
             hint: Text(
-              'Filtrer par tag',
+              AppLocale.filtrer.getString(context),
               style: TextStyles.subtitle3Style(
                   Theme.of(context).colorScheme.secondary),
             ),
-            items: <DropdownMenuItem<String>>[
-              DropdownMenuItem<String>(
-                value: 'Filtrer par tag',
+            items: widget.devicesList.map((String device) {
+              return DropdownMenuItem<String>(
+                value: device,
                 child: Text(
-                  'Filtrer par tag',
+                  device,
                   style: TextStyles.subtitle3Style(
                       Theme.of(context).colorScheme.secondary),
                 ),
-              ),
-              DropdownMenuItem<String>(
-                value: 'Salle de bain',
-                child: Text(
-                  'Salle de bain',
-                  style: TextStyles.subtitle3Style(
-                      Theme.of(context).colorScheme.secondary),
-                ),
-              ),
-              DropdownMenuItem<String>(
-                value: 'Robinet',
-                child: Text(
-                  'Robinet',
-                  style: TextStyles.subtitle3Style(
-                      Theme.of(context).colorScheme.secondary),
-                ),
-              ),
-              DropdownMenuItem<String>(
-                value: 'Cuisine',
-                child: Text(
-                  'Cuisine',
-                  style: TextStyles.subtitle3Style(
-                      Theme.of(context).colorScheme.secondary),
-                ),
-              ),
-              DropdownMenuItem<String>(
-                value: 'Lavabo',
-                child: Text(
-                  'Lavabo',
-                  style: TextStyles.subtitle3Style(
-                      Theme.of(context).colorScheme.secondary),
-                ),
-              ),
-            ],
+              );
+            }).toList(),
             onChanged: (String? newValue) {
-              setState(() {
-                selectedTag = newValue;
-                if (newValue != null && !selectedTags.contains(newValue)) {
-                  selectedTags.add(newValue);
-                }
-              });
+              if (newValue != null && !widget.selectedTags.contains(newValue)) {
+                widget.onTagSelected(newValue); // Call the toggle method
+              }
             },
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-            ),
             isExpanded: true,
             icon: Icon(
               Icons.arrow_drop_down,
@@ -117,7 +75,7 @@ class _MyTagDropDownBtnState extends State<MyTagDropDownBtn> {
           padding: EdgeInsets.only(top: 5),
           child: Wrap(
             spacing: 5,
-            children: selectedTags.map((tag) {
+            children: widget.selectedTags.map((tag) {
               return Chip(
                 deleteIconColor: Theme.of(context).colorScheme.secondary,
                 label: Text(
@@ -127,12 +85,7 @@ class _MyTagDropDownBtnState extends State<MyTagDropDownBtn> {
                   ),
                 ),
                 onDeleted: () {
-                  setState(() {
-                    selectedTags.remove(tag);
-                    if (selectedTag == tag) {
-                      selectedTag = null;
-                    }
-                  });
+                  widget.onTagSelected(tag);
                 },
               );
             }).toList(),

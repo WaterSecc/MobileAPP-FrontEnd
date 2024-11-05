@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:watersec_mobileapp_front/Localization/locales.dart';
-
+import 'package:watersec_mobileapp_front/ViewModel/day_periodConsumptionViewModel.dart';
+import 'package:watersec_mobileapp_front/ViewModel/month_periodConsumptionViewModel.dart';
+import 'package:watersec_mobileapp_front/ViewModel/year_periodConsumptionViewModel.dart';
+import 'dart:math' as math;
 import 'package:watersec_mobileapp_front/classes/chart_class.dart';
+import 'package:watersec_mobileapp_front/classes/consumption.dart';
 import 'package:watersec_mobileapp_front/colors.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
@@ -23,60 +29,90 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
   Color dayButtonColor = darkBlue;
   Color monthButtonColor = blue;
   Color yearButtonColor = blue;
-  //List<charts.Series<ChartData, String>> _seriesList = [];
+  num total = 0.0;
 
   @override
   void initState() {
     super.initState();
-    //_seriesList = _createSeriesList();
+    final dayperiodViewModel = context.read<DayPeriodConsumptionViewModel>();
+    final monthperiodViewModel =
+        context.read<MonthPeriodConsumptionViewModel>();
+    final yearperiodViewModel = context.read<YearPeriodConsumptionViewModel>();
+    dayperiodViewModel.fetchDayPeriodConsumption();
+    monthperiodViewModel.fetchMonthPeriodConsumption();
+    yearperiodViewModel.fetchYearPeriodConsumption();
   }
 
-  List<ChartSeries<ChartData, String>> _createSeriesList() {
-    List<ChartData> data = [];
-    DateTime currentDate = DateTime.now();
+  List<ChartSeries<ChartDataBar, String>> _createSeriesList(
+    DayPeriodConsumptionViewModel dayperiodViewModel,
+    MonthPeriodConsumptionViewModel monthperiodViewModel,
+    YearPeriodConsumptionViewModel yearperiodViewModel,
+    void Function(num) updateTotal,
+  ) {
+    List<ChartDataBar> data = [];
+    num total = 0.0;
 
     if (selectedCategory == 'Day') {
-      // Generate data for 7 days of the week
-      List<String> daysOfWeek = [];
-      for (int i = 6; i >= 0; i--) {
-        DateTime date = currentDate.subtract(Duration(days: i));
-        String dayLabel = DateFormat('E').format(date);
-        daysOfWeek.add(dayLabel);
+      for (int i = 0; i < dayperiodViewModel.dates.length; i++) {
+        double coldValue = dayperiodViewModel.consumptions
+            .firstWhere((c) => c.tag == 'cold')
+            .values[i];
+        double hotValue = dayperiodViewModel.consumptions
+            .firstWhere((c) => c.tag == 'hot')
+            .values[i];
+        data.add(ChartDataBar(
+          dayperiodViewModel.dates[i],
+          coldValue,
+          hotValue,
+        ));
+        total = dayperiodViewModel.total;
       }
-      data = daysOfWeek.map((day) => ChartData(day, 2, 1)).toList();
     } else if (selectedCategory == 'Month') {
-      // Generate data for 7 months including the current month
-      List<String> months = [];
-      for (int i = 6; i >= 0; i--) {
-        DateTime date = DateTime(currentDate.year, currentDate.month - i, 1);
-        String monthLabel = DateFormat('MMM').format(date);
-        months.add(monthLabel);
+      for (int i = 0; i < monthperiodViewModel.dates.length; i++) {
+        double coldValue = monthperiodViewModel.consumptions
+            .firstWhere((c) => c.tag == 'cold')
+            .values[i];
+        double hotValue = monthperiodViewModel.consumptions
+            .firstWhere((c) => c.tag == 'hot')
+            .values[i];
+        data.add(ChartDataBar(
+          monthperiodViewModel.dates[i],
+          coldValue,
+          hotValue,
+        ));
+        total = monthperiodViewModel.total;
       }
-      data = months.map((month) => ChartData(month, 2, 1)).toList();
     } else if (selectedCategory == 'Year') {
-      // Generate data for 5 years including the current year
-      List<String> years = [];
-      for (int i = 4; i >= 0; i--) {
-        int year = currentDate.year - i;
-        years.add(year.toString());
+      for (int i = 0; i < yearperiodViewModel.dates.length; i++) {
+        double coldValue = yearperiodViewModel.consumptions
+            .firstWhere((c) => c.tag == 'cold')
+            .values[i];
+        double hotValue = yearperiodViewModel.consumptions
+            .firstWhere((c) => c.tag == 'hot')
+            .values[i];
+        data.add(ChartDataBar(
+          yearperiodViewModel.dates[i],
+          coldValue,
+          hotValue,
+        ));
+        total = yearperiodViewModel.total;
       }
-      data = years.map((year) => ChartData(year, 2, 1)).toList();
     }
-
+    updateTotal(total);
     return [
-      ColumnSeries<ChartData, String>(
+      ColumnSeries<ChartDataBar, String>(
         name: 'Cold',
         color: blue,
         dataSource: data,
-        xValueMapper: (ChartData data, _) => data.category,
-        yValueMapper: (ChartData data, _) => data.coldLiters,
+        xValueMapper: (ChartDataBar data, _) => data.date,
+        yValueMapper: (ChartDataBar data, _) => data.coldLiters,
       ),
-      ColumnSeries<ChartData, String>(
+      ColumnSeries<ChartDataBar, String>(
         name: 'Hot',
         color: red,
         dataSource: data,
-        xValueMapper: (ChartData data, _) => data.category,
-        yValueMapper: (ChartData data, _) => data.hotLiters,
+        xValueMapper: (ChartDataBar data, _) => data.date,
+        yValueMapper: (ChartDataBar data, _) => data.hotLiters,
       ),
     ];
   }
@@ -102,7 +138,7 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
     }
   }
 
-  void selectCategory(String category) {
+  void selectCategory(String category, num total) {
     setState(() {
       selectedCategory = category;
 
@@ -110,6 +146,7 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
         dayButtonColor = darkBlue;
         monthButtonColor = blue;
         yearButtonColor = blue;
+        total;
 
         // Refresh the date to today's date
         currentDate = DateTime.now();
@@ -117,183 +154,236 @@ class _DateNavigationButtonState extends State<DateNavigationButton> {
         dayButtonColor = blue;
         monthButtonColor = darkBlue;
         yearButtonColor = blue;
+        total;
       } else if (category == 'Year') {
         dayButtonColor = blue;
         monthButtonColor = blue;
         yearButtonColor = darkBlue;
+        total;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Center(
-            child: Container(
-              decoration: BoxDecoration(
-                color: blue,
-                border: Border.all(
-                  style: BorderStyle.solid,
-                  color: Theme.of(context).cardColor,
-                ),
+    final dayperiodViewModel = context.watch<DayPeriodConsumptionViewModel>();
+    final monthperiodViewModel =
+        context.watch<MonthPeriodConsumptionViewModel>();
+    final yearperiodViewModel = context.watch<YearPeriodConsumptionViewModel>();
+    bool _isLoading = yearperiodViewModel.total == 0 &&
+        monthperiodViewModel.total == 0 &&
+        dayperiodViewModel.total == 0;
+    List<ChartSeries<ChartDataBar, String>> seriesList = _createSeriesList(
+      dayperiodViewModel,
+      monthperiodViewModel,
+      yearperiodViewModel,
+      (num updatedTotal) {
+        setState(() {
+          total = updatedTotal;
+        });
+      },
+    );
+
+    // Define the custom tooltip template here so it has access to context
+    Widget _customTooltipTemplate(dynamic data, ChartPoint<dynamic> point,
+        ChartSeries<dynamic, dynamic> series, int pointIndex, int seriesIndex) {
+      return SizedBox(
+        height: 80,
+        width: 150,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            borderRadius: BorderRadius.circular(4.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3),
               ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 55,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      selectCategory('Day');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: dayButtonColor,
-                    ),
-                    child: Text(
-                      AppLocale.Day.getString(context),
-                      style: TextStyles.DatenavBtn(white),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      selectCategory('Month');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: monthButtonColor,
-                    ),
-                    child: Text(
-                      AppLocale.Month.getString(context),
-                      style: TextStyles.DatenavBtn(white),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      selectCategory('Year');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: yearButtonColor,
-                    ),
-                    child: Text(
-                      AppLocale.Year.getString(context),
-                      style: TextStyles.DatenavBtn(white),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 35,
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                onPressed: () {
-                  updateDate(-1);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: Theme.of(context).colorScheme.secondary,
+              Center(
+                child: Text(
+                  '${(data as ChartDataBar).date} ',
+                  style: TextStyles.subtitle6Style(
+                    Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              Column(
+              SizedBox(height: 2),
+              Row(
                 children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 2, right: 3),
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: blue,
+                    ),
+                  ),
                   Text(
-                    AppLocale.Total.getString(context)+' 238 Litres',
-                    style: TextStyles.header5Style(
+                    'Cold: ${(data as ChartDataBar).coldLiters} L',
+                    style: TextStyles.subtitle6Style(
                       Theme.of(context).colorScheme.secondary,
                     ),
                   ),
-                  SizedBox(
+                ],
+              ),
+              SizedBox(height: 2),
+              Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 2, right: 3),
+                    width: 10,
                     height: 10,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: red,
+                    ),
                   ),
-                  GestureDetector(
-                    onTap: showCalendarPopup,
-                    child: Text(
-                      selectedCategory == 'Day'
-                          ? '${dformat.format(currentDate)}'
-                          : selectedCategory == 'Month'
-                              ? '${mformat.format(currentDate)}'
-                              : '${yformat.format(currentDate)}',
-                      style: TextStyles.header5Style(
-                        Theme.of(context).colorScheme.secondary,
+                  Text(
+                    'Hot: ${(data as ChartDataBar).hotLiters} L',
+                    style: TextStyles.subtitle6Style(
+                      Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      child: Skeletonizer(
+        enabled: _isLoading,
+        ignoreContainers: true,
+        child: Column(
+          children: [
+            // Date Navigation Buttons with Blue Background
+            Container(
+              width: double.infinity, // Ensure full width
+              color: blue, // Blue background for the entire container
+              padding: const EdgeInsets.symmetric(
+                  vertical: 0.01), // Vertical padding
+              child: Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceEvenly, // Ensure equal spacing
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        selectCategory('Day', dayperiodViewModel.total);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: dayButtonColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocale.Day.getString(context),
+                        style: TextStyles.DatenavBtn(white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8), // Add a little gap between buttons
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        selectCategory('Month', monthperiodViewModel.total);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: monthButtonColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocale.Month.getString(context),
+                        style: TextStyles.DatenavBtn(white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        selectCategory('Year', yearperiodViewModel.total);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: yearButtonColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocale.Year.getString(context),
+                        style: TextStyles.DatenavBtn(white),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(
-                width: 10,
-              ),
-              IconButton(
-                onPressed: () {
-                  updateDate(1);
-                },
-                icon: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Theme.of(context).colorScheme.secondary,
+            ),
+            const SizedBox(height: 10),
+            // Chart Section
+            SizedBox(
+              height: 250,
+              child: SfCartesianChart(
+                key: const Key('chart'),
+                tooltipBehavior: TooltipBehavior(
+                  enable: true,
+                  builder: _customTooltipTemplate,
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            height: 250,
-            child: SfCartesianChart(
-              series: _createSeriesList()
-                  .cast<CartesianSeries<ChartData, String>>(),
-              primaryXAxis: CategoryAxis(
-                labelStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
+                zoomPanBehavior: ZoomPanBehavior(
+                  enablePanning: true,
+                  enablePinching: true,
+                  enableSelectionZooming: true,
+                  zoomMode: ZoomMode.x,
                 ),
-              ),
-              primaryYAxis: NumericAxis(
-                labelStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
+                series:
+                    seriesList.cast<CartesianSeries<ChartDataBar, String>>(),
+                primaryXAxis: CategoryAxis(
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 10,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.normal,
+                  ),
+                  plotOffset: 20,
+                  autoScrollingMode: AutoScrollingMode.end,
+                  autoScrollingDelta: 4,
                 ),
-              ),
-              title: ChartTitle(
-                text: AppLocale.WaterC.getString(context),
-                textStyle: TextStyles.subtitle5Style(
-                  Theme.of(context).colorScheme.secondary,
+                primaryYAxis: NumericAxis(
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 10,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                title: ChartTitle(
+                  text: AppLocale.Total.getString(context) +
+                      ' ' +
+                      total.toStringAsFixed(2) +
+                      'L',
+                  textStyle: TextStyles.header5Style(
+                    Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
-  }
-
-  void showCalendarPopup() async {
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: currentDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-
-    if (pickedDate != null && pickedDate != currentDate) {
-      setState(() {
-        currentDate = pickedDate;
-      });
-    }
   }
 }

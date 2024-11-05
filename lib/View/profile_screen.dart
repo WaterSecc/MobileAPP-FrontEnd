@@ -1,270 +1,277 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:watersec_mobileapp_front/Localization/locales.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:watersec_mobileapp_front/View/components/app_bar.dart';
 import 'package:watersec_mobileapp_front/View/components/drawer.dart';
 import 'package:watersec_mobileapp_front/View/components/filled_button.dart';
-import 'package:watersec_mobileapp_front/View/components/languagedrop_button.dart';
-import 'package:watersec_mobileapp_front/View/components/phonenumber_ddbtn.dart';
+import 'package:watersec_mobileapp_front/View/components/languageprofile.dart';
 import 'package:watersec_mobileapp_front/View/components/textBtnNotOutlined.dart';
 import 'package:watersec_mobileapp_front/View/components/text_field.dart';
+import 'package:watersec_mobileapp_front/ViewModel/editprofileViewModel.dart';
+import 'package:watersec_mobileapp_front/ViewModel/userInfoViewModel.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:watersec_mobileapp_front/colors.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  const Profile({Key? key}) : super(key: key);
 
   @override
   State<Profile> createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
-  late String _page = AppLocale.Profile.getString(context);
-  final List<String> phoneCodesList = [
-    '+ 20',
-    '+ 33',
-    '+ 49',
-    '+ 30',
-    '+ 39',
-    '+ 961',
-    '+ 218',
-    '+ 212',
-    '+ 31',
-    '+ 966',
-    '+ 41',
-    '+ 216',
-  ];
+  final _formKey = GlobalKey<FormState>();
 
-  String selectedPhone = '+ 216';
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<UserInfoViewModel>().fetchUserInfo();
+      context.read<EditProfileViewModel>().initUserData();
+    });
+  }
+
+  Future<void> requestPermissions() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      await Permission.camera.request();
+    }
+
+    status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+  final ImagePicker _picker = ImagePicker();
+  final XFile? pickedFile = await _picker.pickImage(source: source);
+
+  if (pickedFile != null) {
+    File imageFile = File(pickedFile.path);
+    context.read<EditProfileViewModel>().setProfileImage(imageFile);
+  }
+}
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+    final userInfoViewModel = context.watch<UserInfoViewModel>();
+    final editProfileViewModel = context.watch<EditProfileViewModel>();
+    final isLoading =
+        userInfoViewModel.id == 0 || editProfileViewModel.isLoading;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double avatarSize = screenWidth * 0.4; // Adjust size dynamically
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      drawer: const MyDrawer(),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: MyAppBar(page: AppLocale.Profile.getString(context)),
       ),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        drawer: MyDrawer(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: MyAppBar(page: _page),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 50,
-              ),
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 300,
-                      height: 160,
-                      decoration: BoxDecoration(shape: BoxShape.circle),
-                      child: Ink(
+      body: Skeletonizer(
+        enabled: isLoading,
+        ignoreContainers: true,
+        child: SingleChildScrollView( 
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 30),
+                // User Icon
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: avatarSize,
+                        height: avatarSize,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/azizatar.png'),
-                            fit: BoxFit.fill,
-                          ),
+                          color: green,
                         ),
+                        child: userInfoViewModel.avatarUrl.isEmpty
+                            ? Center(
+                                child: Text(
+                                  userInfoViewModel.firstName.isNotEmpty
+                                      ? userInfoViewModel.firstName[0]
+                                          .toUpperCase()
+                                      : '?',
+                                  style: TextStyle(
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                              )
+                            : ClipOval(
+                                child: Image.network(
+                                  userInfoViewModel.avatarUrl,
+                                  width: avatarSize,
+                                  height: avatarSize,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Center(
+                                      child: Text(
+                                        userInfoViewModel.firstName.isNotEmpty
+                                            ? userInfoViewModel.firstName[0]
+                                                .toUpperCase()
+                                            : '?',
+                                        style: TextStyle(
+                                          fontSize: 60,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
                       ),
-                    ),
-                    Positioned(
-                        top: 130,
-                        left: 180,
-                        child: Container(
-                          height: 35,
-                          width: 35,
-                          child: IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                FontAwesomeIcons.image,
-                                color: Theme.of(context).colorScheme.secondary,
-                              )),
-                        ))
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 35,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 33,
-                  ),
-                  SizedBox(
-                      width: 160,
-                      height: 44,
-                      child:
-                          MyTextField(hint: AppLocale.Name.getString(context))),
-                  SizedBox(
-                    width: 7,
-                  ),
-                  SizedBox(
-                      width: 160,
-                      height: 44,
-                      child: MyTextField(
-                          hint: AppLocale.LastName.getString(context))),
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                  width: 327,
-                  height: 44,
-                  child: MyTextField(hint: AppLocale.Email.getString(context))),
-              SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                  width: 327,
-                  height: 44,
-                  child:
-                      MyTextField(hint: AppLocale.Company.getString(context))),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 33,
-                  ),
-                  SizedBox(
-                      width: 160,
-                      height: 44,
-                      child: MyTextField(
-                          hint: AppLocale.Employees.getString(context))),
-                  SizedBox(
-                    width: 7,
-                  ),
-                  SizedBox(
-                      width: 160,
-                      height: 44,
-                      child: Container(
-                        width: 160,
-                        height: 44,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).colorScheme.secondary,
-                                style: BorderStyle.solid,
-                                width: 0.7),
-                            borderRadius: BorderRadius.all(Radius.circular(9))),
-                        child: Center(child: MyDropdownMenu()),
-                      )),
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                width: 327,
-                height: 44,
-                child: Container(
-                  width: 327,
-                  height: 44,
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Theme.of(context).colorScheme.secondary,
-                          style: BorderStyle.solid,
-                          width: 0.7),
-                      borderRadius: BorderRadius.all(Radius.circular(9))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 3,
-                      ),
-                      MyPhoneNumberDDButton(
-                          phoneCodes: phoneCodesList,
-                          selectedPhoneCode: selectedPhone),
-                      SizedBox(
-                        width: 251.5,
-                        child: TextFormField(
-                          style: TextStyle(
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: IconButton(
+                          onPressed: () {
+                            pickImage(ImageSource.gallery);
+                          },
+                          icon: Icon(
+                            FontAwesomeIcons.cameraRetro,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Theme.of(context).colorScheme.background,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.background,
-                              ),
-                            ),
-                            hintText: AppLocale.PhoneNumber.getString(context),
-                            hintStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.normal,
-                              fontSize: 14,
-                            ),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 33,
+                const SizedBox(height: 20),
+                // Form fields
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: [
+                      // Name Fields Row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: MyTextField(
+                              hint: AppLocale.Name.getString(context),
+                              controller:
+                                  editProfileViewModel.firstNameController,
+                              onChanged: editProfileViewModel.setFirstname,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: MyTextField(
+                              hint: AppLocale.LastName.getString(context),
+                              controller:
+                                  editProfileViewModel.lastNameController,
+                              onChanged: editProfileViewModel.setLastname,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      // Email Field
+                      MyTextField(
+                        hint: AppLocale.Email.getString(context),
+                        controller: editProfileViewModel.emailController,
+                        onChanged: editProfileViewModel.setEmail,
+                      ),
+                      const SizedBox(height: 10),
+                      // Address Field
+                      MyTextField(
+                        hint: AppLocale.Company.getString(context),
+                        controller: editProfileViewModel.addressLineController,
+                        onChanged: editProfileViewModel.setAddressLine,
+                      ),
+                      const SizedBox(height: 10),
+                      // Country and Employees Field Row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: MyLanguageDropdownMenu(
+                              onLanguageChanged: (selectedLanguage) {
+                                editProfileViewModel
+                                    .setLanguage(selectedLanguage);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: MyTextField(
+                              hint: AppLocale.Employees.getString(context),
+                              controller: editProfileViewModel.cityController,
+                              onChanged: editProfileViewModel.setCity,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      // Phone Number Field
+                      MyTextField(
+                        hint: AppLocale.PhoneNumber.getString(context),
+                        controller: editProfileViewModel.phoneNumberController,
+                        onChanged: editProfileViewModel.setPhone,
+                      ),
+                      const SizedBox(height: 10),
+                      // Number of Employees Field
+                      MyTextField(
+                        hint: AppLocale.Employees.getString(context),
+                        controller: editProfileViewModel.countryController,
+                        onChanged: editProfileViewModel.setCountry,
+                      ),
+                      const SizedBox(height: 20),
+                      // Save Button
+                      SizedBox(
+                        width: screenWidth * 0.6,
+                        child: MyFilledButton(
+                          text: AppLocale.Save.getString(context),
+                          onPressed: () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              final isProfileUpdated =
+                                  await editProfileViewModel.updateProfile();
+                              if (isProfileUpdated) {
+                                Navigator.popAndPushNamed(context, '/profile');
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      AppLocale.ChangedSuccessfully.getString(
+                                          context),
+                                    ),
+                                    backgroundColor: green,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                      // Change Password Button
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: MyTxtBtnNotOutlined(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/changepwd');
+                          },
+                          text: AppLocale.ChangePwd.getString(context),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                      width: 160,
-                      height: 44,
-                      child: MyTextField(
-                          hint: AppLocale.Position.getString(context))),
-                  SizedBox(
-                    width: 7,
-                  ),
-                  SizedBox(
-                      width: 160,
-                      height: 44,
-                      child: MyTextField(
-                          hint: AppLocale.ZIPCode.getString(context))),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: SizedBox(
-                  width: 207,
-                  height: 38,
-                  child: MyFilledButton(
-                      text: AppLocale.Save.getString(context),
-                      onPressed: () {}),
                 ),
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 220,
-                  ),
-                  MyTxtBtnNotOutlined(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/changepwd');
-                    },
-                    text: AppLocale.ChangePwd.getString(context),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

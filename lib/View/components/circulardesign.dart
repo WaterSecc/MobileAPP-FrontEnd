@@ -23,12 +23,13 @@ class MyCircularDesign extends StatefulWidget {
 }
 
 class _MyCircularDesignState extends State<MyCircularDesign> {
-  int _selectedCircleIndex = 0;
-  double _circleSizeDelta = 0;
+  int _selectedCircleIndex = -1;
+  double _circleSize = 0;
 
-  void _increaseCircleSize() {
+  void _increaseCircleSize(int index) {
     setState(() {
-      _circleSizeDelta += 20; // Increase the size by 20
+      _selectedCircleIndex = index;
+      _circleSize = 10; // Increase the size by 10
     });
   }
 
@@ -42,22 +43,18 @@ class _MyCircularDesignState extends State<MyCircularDesign> {
           left: 0,
           right: 0,
           child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedCircleIndex = 0;
-              });
-            },
+            onTap: () => _increaseCircleSize(0),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: _selectedCircleIndex == 0 ? 270 + _circleSizeDelta : 260,
-              height: _selectedCircleIndex == 0 ? 270 + _circleSizeDelta : 260,
+              width: _selectedCircleIndex == 0 ? 265 + _circleSize : 260,
+              height: _selectedCircleIndex == 0 ? 265 + _circleSize : 260,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: gray,
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 100),
+                  const SizedBox(height: 100),
                   Text(
                     widget.consommationtxt,
                     style: TextStyles.subtitle1Style(white),
@@ -71,27 +68,22 @@ class _MyCircularDesignState extends State<MyCircularDesign> {
             ),
           ),
         ),
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 300),
-          top: _selectedCircleIndex == 1 ? 0 : 230,
+        Positioned(
+          top: 230,
           left: 20,
           child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedCircleIndex = 1;
-              });
-            },
+            onTap: () => _increaseCircleSize(1),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: _selectedCircleIndex == 1 ? 190 + _circleSizeDelta : 175,
-              height: _selectedCircleIndex == 1 ? 190 + _circleSizeDelta : 175,
+              width: _selectedCircleIndex == 1 ? 180 + _circleSize : 175,
+              height: _selectedCircleIndex == 1 ? 180 + _circleSize : 175,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: blue,
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 60),
                   Text(
                     AppLocale.Froid.getString(context),
                     style: TextStyles.subtitle1Style(white),
@@ -105,27 +97,22 @@ class _MyCircularDesignState extends State<MyCircularDesign> {
             ),
           ),
         ),
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 300),
-          top: _selectedCircleIndex == 2 ? 0 : 200,
+        Positioned(
+          top: 230,
           right: 20,
           child: GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedCircleIndex = 2;
-              });
-            },
+            onTap: () => _increaseCircleSize(2),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: _selectedCircleIndex == 2 ? 190 + _circleSizeDelta : 175,
-              height: _selectedCircleIndex == 2 ? 190 + _circleSizeDelta : 175,
+              width: _selectedCircleIndex == 2 ? 175 + _circleSize : 175,
+              height: _selectedCircleIndex == 2 ? 175 + _circleSize : 175,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: red,
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 60),
                   Text(
                     AppLocale.Chaud.getString(context),
                     style: TextStyles.subtitle1Style(white),

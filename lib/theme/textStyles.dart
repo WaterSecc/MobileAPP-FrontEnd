@@ -24,7 +24,7 @@ class TextStyles {
     return TextStyle(
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.normal,
-      fontSize: 18,
+      fontSize: 15,
       color: color,
     );
   }
@@ -33,7 +33,7 @@ class TextStyles {
     return TextStyle(
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.w500,
-      fontSize: 11,
+      fontSize: 13,
       color: color,
     );
   }
@@ -65,9 +65,27 @@ class TextStyles {
     );
   }
 
+  static TextStyle Header22Style(Color color) {
+    return TextStyle(
+      color: color,
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.normal,
+      fontSize: 33,
+    );
+  }
+
   static TextStyle Header3Style() {
     return TextStyle(
       color: white,
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.normal,
+      fontSize: 22,
+    );
+  }
+
+  static TextStyle Header3_Style(Color color) {
+    return TextStyle(
+      color: color,
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.normal,
       fontSize: 22,
@@ -110,6 +128,15 @@ class TextStyles {
     );
   }
 
+  static TextStyle palierStyle(Color color) {
+    return TextStyle(
+      color: color,
+      fontFamily: 'Monda',
+      fontWeight: FontWeight.w900,
+      fontSize: 13,
+    );
+  }
+
   static TextStyle subtitle3Style(Color color) {
     return TextStyle(
       fontFamily: 'Montserrat',
@@ -123,7 +150,7 @@ class TextStyles {
     return TextStyle(
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.normal,
-      fontSize: 10,
+      fontSize: 12,
       color: color,
     );
   }
@@ -142,6 +169,51 @@ class TextStyles {
       fontFamily: 'Montserrat',
       fontWeight: FontWeight.normal,
       fontSize: 12,
+      color: color,
+    );
+  }
+
+  static TextStyle notifTitle(Color color) {
+    return TextStyle(
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.w700,
+      fontSize: 15,
+      color: color,
+    );
+  }
+
+  static TextStyle notifdesc(Color color) {
+    return TextStyle(
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.normal,
+      fontSize: 14,
+      color: color,
+    );
+  }
+
+  static TextStyle notifdate(Color color) {
+    return TextStyle(
+      fontFamily: 'Monda',
+      fontWeight: FontWeight.w500,
+      fontSize: 12,
+      color: color,
+    );
+  }
+
+  static TextStyle notifType(Color color) {
+    return TextStyle(
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.bold,
+      fontSize: 14,
+      color: color,
+    );
+  }
+
+  static TextStyle notifDevice(Color color) {
+    return TextStyle(
+      fontFamily: 'Montserrat',
+      fontWeight: FontWeight.normal,
+      fontSize: 14,
       color: color,
     );
   }

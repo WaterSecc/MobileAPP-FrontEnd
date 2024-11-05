@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:provider/provider.dart';
+import 'package:watersec_mobileapp_front/Localization/locales.dart';
+import 'package:watersec_mobileapp_front/View/components/filled_button.dart';
+import 'package:watersec_mobileapp_front/ViewModel/devicesViewModel.dart';
 import 'package:watersec_mobileapp_front/View/components/dateselection_container.dart';
-import 'package:watersec_mobileapp_front/View/components/tag_ddbtn.dart';
 import 'package:watersec_mobileapp_front/View/components/text_button.dart';
+import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
 class CustomPopup extends StatefulWidget {
-  final Function(List<String>) onFiltersSelected;
+  final Function(List<Map<String, String>>, DateTime, DateTime)
+      onFiltersAndDatesSelected;
   final String defaultTagText;
 
   const CustomPopup({
     Key? key,
-    required this.onFiltersSelected,
+    required this.onFiltersAndDatesSelected,
     required this.defaultTagText,
   }) : super(key: key);
 
@@ -19,123 +24,203 @@ class CustomPopup extends StatefulWidget {
   State<CustomPopup> createState() => _CustomPopupState();
 }
 
-class _CustomPopupState extends State<CustomPopup>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+class _CustomPopupState extends State<CustomPopup> {
   bool _isTagContainerOpen = false;
-  bool _isDateContainerOpen = false;
-  List<String> selectedTags = [];
-  String selectedTag = 'Filtrer par tag';
-  DateTime _selectedDate1 = DateTime.now();
-  DateTime _selectedDate2 = DateTime.now();
+  List<Map<String, String>> selectedFloors = [];
+  DateTime _selectedStartDate = DateTime.now().subtract(Duration(days: 30));
+  DateTime _selectedEndDate = DateTime.now();
+  final DateFormat dformat = DateFormat('dd/MM/yyyy');
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
+    _fetchDevices();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  Future<void> _fetchDevices() async {
+    await Provider.of<DevicesViewModel>(context, listen: false)
+        .fetchDevices(context);
+  }
+
+  void _onDatesSelected(DateTime startDate, DateTime endDate) {
+    setState(() {
+      _selectedStartDate = startDate;
+      _selectedEndDate = endDate;
+    });
   }
 
   void _toggleTagContainer() {
     setState(() {
       _isTagContainerOpen = !_isTagContainerOpen;
-      if (_isTagContainerOpen) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
     });
   }
 
-  void _toggleDateContainer() {
+  Future<void> _handleApplyFiltersAndNavigateBack() async {
+    widget.onFiltersAndDatesSelected(
+      selectedFloors,
+      _selectedStartDate,
+      _selectedEndDate,
+    );
+    Navigator.of(context).pop();
+  }
+
+  void _selectFloor(String buildingName, String floorName, String floorId) {
+    final floorData = {
+      "buildingName": buildingName,
+      "floorName": floorName,
+      "floorId": floorId,
+    };
+
     setState(() {
-      _isDateContainerOpen = !_isDateContainerOpen;
-      if (_isDateContainerOpen) {
-        _animationController.forward();
+      if (selectedFloors.any((f) => f["floorId"] == floorId)) {
+        selectedFloors.removeWhere((f) => f["floorId"] == floorId);
       } else {
-        _animationController.reverse();
+        selectedFloors.add(floorData);
       }
     });
-  }
-
-  void _toggleTag(String tag) {
-    setState(() {
-      if (selectedTags.contains(tag)) {
-        selectedTags.remove(tag);
-      } else {
-        selectedTags.add(tag);
-      }
-    });
-  }
-
-  void _applyFilters() {
-    widget.onFiltersSelected(selectedTags);
-    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final dialogWidth = screenSize.width;
-    final dialogHeight = screenSize.height;
+    final dialogHeight = screenSize.height * 0.85;
+
+    final devicesViewModel = context.watch<DevicesViewModel>();
+    final buildings = devicesViewModel.buildings;
 
     return Dialog(
       insetPadding: EdgeInsets.all(0),
       child: Container(
         padding: EdgeInsets.all(13),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(9),
-            color: Theme.of(context).colorScheme.background,),
+          borderRadius: BorderRadius.circular(9),
+          color: Theme.of(context).colorScheme.background,
+        ),
         width: dialogWidth,
         height: dialogHeight,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 6),
-            Container(
-              width: dialogWidth,
-              height: dialogHeight * 0.23,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(9),
-                border: Border.all(
-                  width: 0.3,
-                  style: BorderStyle.solid,
-                  color: Theme.of(context).colorScheme.secondary,
+            if (buildings.isEmpty)
+              Center(
+                child: Text('No floors available for selected water meters.'),
+              )
+            else
+              Container(
+                width: dialogWidth,
+                height: _isTagContainerOpen ? dialogHeight * 0.23 : 60,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(9),
+                  border: Border.all(
+                    width: 0.3,
+                    style: BorderStyle.solid,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+                child: Container(
+                  margin: EdgeInsets.only(left: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: _toggleTagContainer,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(AppLocale.filtrer.getString(context),
+                                textAlign: TextAlign.left,
+                                style: TextStyles.Header4Style(
+                                    Theme.of(context).colorScheme.secondary)),
+                          ),
+                        ),
+                      ),
+                      if (_isTagContainerOpen)
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: buildings.length,
+                            itemBuilder: (context, index) {
+                              final building = buildings[index];
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 4.0),
+                                    child: Text(
+                                      building.name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                    ),
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: building.floors.length,
+                                    itemBuilder: (context, floorIndex) {
+                                      final floor = building.floors[floorIndex];
+                                      final isSelected = selectedFloors.any(
+                                          (f) =>
+                                              f["floorId"] ==
+                                              floor.id.toString());
+
+                                      return GestureDetector(
+                                        onTap: () => _selectFloor(building.name,
+                                            floor.name, floor.id.toString()),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4.0),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8.0),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? Colors.grey[300]
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .background,
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                            child: Text(
+                                              floor.name,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w300,
+                                                color: isSelected
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary
+                                                    : Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge
+                                                        ?.color,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-              child: Column(
-                children: [
-                  Text(
-                    'Filtrer par Tag',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.normal,
-                      fontSize: 17,
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  MyTagDropDownBtn(
-                    selectedTag: selectedTag,
-                    selectedTags: selectedTags,
-                    onTagSelected: _toggleTag,
-                  ),
-                ],
-              ),
-            ),
             SizedBox(height: 3),
             Container(
-              width: 370,
-              height: 479,
+              width: dialogWidth,
+              height: dialogHeight * 0.65,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(9),
                 border: Border.all(
@@ -146,55 +231,50 @@ class _CustomPopupState extends State<CustomPopup>
               ),
               child: Column(
                 children: [
-                  SizedBox(height: 6),
-                  Text(
-                    'Filtrer par Date',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.normal,
-                      fontSize: 17,
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(AppLocale.filtrerdate.getString(context),
+                          textAlign: TextAlign.left,
+                          style: TextStyles.Header4Style(
+                              Theme.of(context).colorScheme.secondary)),
                     ),
                   ),
-                  SizedBox(height: 2),
                   CalendarContainer(
-                    selectedDate1: _selectedDate1,
-                    selectedDate2: _selectedDate2,
+                    selectedDate1: _selectedStartDate,
+                    selectedDate2: _selectedEndDate,
+                    onDateRangeSelected: _onDatesSelected,
                   ),
                 ],
               ),
             ),
             SizedBox(height: 6),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center, // Center the buttons
               children: [
-                SizedBox(width: dialogWidth * 0.22),
-                SizedBox(
-                  width: 130,
-                  height: 38,
-                  child: FilledButton(
-                    onPressed: _applyFilters,
-                    child: Text(
-                      'Filtrer',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.normal,
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.secondary,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                    child: SizedBox(
+                      height: 38,
+                      child: MyFilledButton(
+                        onPressed: _handleApplyFiltersAndNavigateBack,
+                        text: AppLocale.Apply.getString(context),
                       ),
                     ),
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                            Theme.of(context).cardColor,)),
                   ),
                 ),
-                SizedBox(width: 10),
-                SizedBox(
-                  height: 38,
-                  width: 130,
-                  child: MyTextBtn(
-                    text: 'Annuler',
-                    onPressed: () => Navigator.pop(context),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                    child: SizedBox(
+                      height: 38,
+                      child: MyTextBtn(
+                        text: AppLocale.Cancel.getString(context),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
                   ),
                 ),
               ],
