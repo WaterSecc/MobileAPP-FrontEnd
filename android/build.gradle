@@ -4,8 +4,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.gms:google-services:4.3.15'
+        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20"
+
+
     }
+   
 }
 
 allprojects {
@@ -19,12 +24,9 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
 
 subprojects {
-   afterEvaluate { project ->
+    afterEvaluate { project ->
         if (project.hasProperty('android')) {
             project.android {
                 if (namespace == null) {
@@ -34,6 +36,7 @@ subprojects {
         }
     }
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

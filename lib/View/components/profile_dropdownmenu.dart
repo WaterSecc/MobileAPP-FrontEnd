@@ -8,6 +8,9 @@ import 'package:watersec_mobileapp_front/ViewModel/userInfoViewModel.dart';
 import 'package:watersec_mobileapp_front/colors.dart';
 import 'package:watersec_mobileapp_front/theme/textStyles.dart';
 
+// Create a global RouteObserver (add this to main.dart and pass it to MaterialApp)
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class ProfileDropdownMenu extends StatefulWidget {
   final VoidCallback onProfileTap;
 
@@ -20,11 +23,10 @@ class ProfileDropdownMenu extends StatefulWidget {
   State<ProfileDropdownMenu> createState() => _ProfileDropdownMenuState();
 }
 
-class _ProfileDropdownMenuState extends State<ProfileDropdownMenu> {
+class _ProfileDropdownMenuState extends State<ProfileDropdownMenu> with RouteAware {
   GlobalKey actionKey = GlobalKey();
   bool isDropdownOpened = false;
   OverlayEntry? floatingDropdown;
-  bool _isProfilePressed = false; // Track press state for Profile
 
   @override
   void initState() {
@@ -34,33 +36,58 @@ class _ProfileDropdownMenuState extends State<ProfileDropdownMenu> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPushNext() {
+    // Called when navigating to a new page
+    if (isDropdownOpened) {
+      toggleDropdown();
+    }
+  }
+
   void toggleDropdown() {
     if (isDropdownOpened) {
       floatingDropdown?.remove();
+      floatingDropdown = null;
     } else {
       floatingDropdown = _createFloatingDropdown();
       Overlay.of(context).insert(floatingDropdown!);
     }
-    isDropdownOpened = !isDropdownOpened;
+    setState(() {
+      isDropdownOpened = !isDropdownOpened;
+    });
   }
 
   OverlayEntry _createFloatingDropdown() {
-    RenderBox renderBox =
-        actionKey.currentContext!.findRenderObject() as RenderBox;
+    RenderBox renderBox = actionKey.currentContext!.findRenderObject() as RenderBox;
     var size = renderBox.size;
     var offset = renderBox.localToGlobal(Offset.zero);
 
-    // Calculate the position of the dropdown to prevent overflow
     double dropdownTop = offset.dy + size.height + 8;
     double screenHeight = MediaQuery.of(context).size.height;
     if (dropdownTop + 100 > screenHeight) {
-      dropdownTop = screenHeight - 112; // Adjust dropdown to fit on screen
+      dropdownTop = screenHeight - 112;
     }
 
     return OverlayEntry(
       builder: (context) => GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: () {
-          toggleDropdown(); // Close dropdown if the user taps outside
+          if (isDropdownOpened) {
+            toggleDropdown(); // Close dropdown on outside tap
+          }
         },
         child: Stack(
           children: [
@@ -74,80 +101,54 @@ class _ProfileDropdownMenuState extends State<ProfileDropdownMenu> {
                 child: Container(
                   height: 95,
                   decoration: BoxDecoration(
-                    color: blue.withOpacity(0.6), // Change dropdown color here
+                    color: blue.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      SizedBox(
-                        height: 5,
-                      ),
+                      const SizedBox(height: 5),
                       GestureDetector(
                         onTap: () {
                           widget.onProfileTap();
                           toggleDropdown();
-                          _isProfilePressed = true;
                         },
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(7.0),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  FontAwesomeIcons.solidUser,
-                                  color: white,
-                                  size: 13,
-                                ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Text(
-                                  AppLocale.Profile.getString(context),
-                                  style: TextStyles.txtBtnNOStyle(white),
-                                ),
-                              ],
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(7.0),
+                          child: Row(
+                            children: [
+                              Icon(FontAwesomeIcons.solidUser, color: white, size: 13),
+                              const SizedBox(width: 3),
+                              Text(
+                                AppLocale.Profile.getString(context),
+                                style: TextStyles.txtBtnNOStyle(white),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       GestureDetector(
                         onTap: () async {
-                          // Get the LoginViewModel and call logout
-                          final loginViewModel = Provider.of<LoginViewModel>(
-                              context,
-                              listen: false);
+                          final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
                           await loginViewModel.logout();
-
-                          // Navigate to the login screen after logout
                           Navigator.pushReplacementNamed(context, '/login');
                           toggleDropdown();
                         },
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.all(7.0),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  FontAwesomeIcons.signOut,
-                                  color: white,
-                                  size: 13,
+                        child: Padding(
+                          padding: const EdgeInsets.all(7.0),
+                          child: Row(
+                            children: [
+                              Icon(FontAwesomeIcons.signOut, color: white, size: 13),
+                              const SizedBox(width: 3),
+                              Expanded(
+                                child: Text(
+                                  AppLocale.Logout.getString(context),
+                                  style: TextStyles.txtBtnNOStyle(white),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    AppLocale.Logout.getString(context),
-                                    style: TextStyles.txtBtnNOStyle(white),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -167,18 +168,17 @@ class _ProfileDropdownMenuState extends State<ProfileDropdownMenu> {
     final userInfoViewModel = Provider.of<UserInfoViewModel>(context);
     String firstLetter = userInfoViewModel.firstName.isNotEmpty
         ? userInfoViewModel.firstName[0]
-        : '?'; // Fallback to '?' if first name is empty
+        : '?';
+
     return GestureDetector(
       key: actionKey,
-      onTap: () {
-        toggleDropdown();
-      },
+      onTap: toggleDropdown,
       child: CircleAvatar(
         radius: 18,
-        backgroundColor: green, // Placeholder background color
+        backgroundColor: green,
         backgroundImage: userInfoViewModel.avatarUrl.isNotEmpty
             ? NetworkImage(userInfoViewModel.avatarUrl)
-            : null, // Display avatar if available
+            : null,
         child: userInfoViewModel.avatarUrl.isEmpty
             ? Text(
                 firstLetter,
@@ -188,7 +188,7 @@ class _ProfileDropdownMenuState extends State<ProfileDropdownMenu> {
                   fontWeight: FontWeight.bold,
                 ),
               )
-            : null, // Fallback to first letter if avatar is not available
+            : null,
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:watersec_mobileapp_front/Model/day_period_waterConsumption_servi
 import 'package:watersec_mobileapp_front/ViewModel/loginViewModel.dart';
 import 'package:watersec_mobileapp_front/classes/consumption.dart';
 
-class DayPeriodConsumptionViewModel extends ChangeNotifier {
+class DayPeriodConsumptionViewModel extends ChangeNotifier { 
   final dayperiodconsumptionservice = DayPeriodConsumptionService();
   final _loginViewModel = LoginViewModel();
 
@@ -12,6 +12,8 @@ class DayPeriodConsumptionViewModel extends ChangeNotifier {
   List<Consumption> _consumptions = [];
   num _total = 0.0;
   List<String> _selectedWaterMeterIds = []; // Store selected water meters
+   bool _isLoading = true;
+bool get isLoading => _isLoading;
 
   // Getters for consumption and selected water meters
   List<String> get dates => _dates;
@@ -48,6 +50,8 @@ class DayPeriodConsumptionViewModel extends ChangeNotifier {
 
   // Fetch day period water consumption with optional selected water meter IDs
   Future<void> fetchDayPeriodConsumption() async {
+     _isLoading = true;
+  notifyListeners();
     try {
       final accessToken = await _loginViewModel.getAccessToken();
       if (accessToken != null) {
@@ -63,5 +67,7 @@ class DayPeriodConsumptionViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error fetching consumption, period; day: $e');
     }
+    _isLoading = false;
+  notifyListeners();
   }
 }

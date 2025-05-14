@@ -25,6 +25,8 @@ class DashboardViewModel extends ChangeNotifier {
   double _consumptionLevel = 0;
 
   List<String> _selectedWaterMeterIds = []; // Store selected water meters
+  bool _isLoading = true;
+bool get isLoading => _isLoading;
 
   // Getters for the consumption and amount values
   double get currentWaterConsumption => _currentWaterConsumption;
@@ -40,6 +42,8 @@ class DashboardViewModel extends ChangeNotifier {
 
   // Fetch daily water consumption with selected water meters from WaterMetersViewModel
   Future<void> fetchDailyWaterConsumption(BuildContext context) async {
+     _isLoading = true;
+  notifyListeners();
     try {
       final accessToken = await _loginViewModel.getAccessToken();
 
@@ -76,6 +80,8 @@ class DashboardViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error fetching water consumption: $e');
     }
+     _isLoading = false;
+  notifyListeners();
   }
 
   // Fetch quarterly water consumption with selected water meters from WaterMetersViewModel

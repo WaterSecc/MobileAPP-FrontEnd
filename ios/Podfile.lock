@@ -1,29 +1,29 @@
 PODS:
-  - Firebase/CoreOnly (11.2.0):
-    - FirebaseCore (= 11.2.0)
-  - Firebase/Messaging (11.2.0):
+  - Firebase/CoreOnly (11.8.0):
+    - FirebaseCore (~> 11.8.0)
+  - Firebase/Messaging (11.8.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 11.2.0)
-  - firebase_core (3.6.0):
-    - Firebase/CoreOnly (= 11.2.0)
+    - FirebaseMessaging (~> 11.8.0)
+  - firebase_core (3.12.1):
+    - Firebase/CoreOnly (= 11.8.0)
     - Flutter
-  - firebase_messaging (15.1.3):
-    - Firebase/Messaging (= 11.2.0)
+  - firebase_messaging (15.2.4):
+    - Firebase/Messaging (= 11.8.0)
     - firebase_core
     - Flutter
-  - FirebaseCore (11.2.0):
-    - FirebaseCoreInternal (~> 11.0)
+  - FirebaseCore (11.8.1):
+    - FirebaseCoreInternal (~> 11.8.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreInternal (11.3.0):
+  - FirebaseCoreInternal (11.8.0):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseInstallations (11.3.0):
-    - FirebaseCore (~> 11.0)
+  - FirebaseInstallations (11.8.0):
+    - FirebaseCore (~> 11.8.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
-  - FirebaseMessaging (11.2.0):
-    - FirebaseCore (~> 11.0)
+  - FirebaseMessaging (11.8.0):
+    - FirebaseCore (~> 11.8.0)
     - FirebaseInstallations (~> 11.0)
     - GoogleDataTransport (~> 10.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
@@ -67,7 +67,6 @@ PODS:
     - GoogleUtilities/Privacy
   - image_picker_ios (0.0.1):
     - Flutter
-  - MTBBarcodeScanner (5.0.11)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
@@ -76,12 +75,9 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - permission_handler_apple (9.1.1):
+  - permission_handler_apple (9.3.0):
     - Flutter
   - PromisesObjC (2.4.0)
-  - qr_code_scanner (0.2.0):
-    - Flutter
-    - MTBBarcodeScanner
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -96,7 +92,6 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
-  - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
@@ -108,7 +103,6 @@ SPEC REPOS:
     - FirebaseMessaging
     - GoogleDataTransport
     - GoogleUtilities
-    - MTBBarcodeScanner
     - nanopb
     - PromisesObjC
 
@@ -131,34 +125,30 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
-  qr_code_scanner:
-    :path: ".symlinks/plugins/qr_code_scanner/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
-  Firebase: 98e6bf5278170668a7983e12971a66b2cd57fc8c
-  firebase_core: 2bedc3136ec7c7b8561c6123ed0239387b53f2af
-  firebase_messaging: 15d114e1a41fc31e4fbabcd48d765a19eec94a38
-  FirebaseCore: a282032ae9295c795714ded2ec9c522fc237f8da
-  FirebaseCoreInternal: ac26d09a70c730e497936430af4e60fb0c68ec4e
-  FirebaseInstallations: 58cf94dabf1e2bb2fa87725a9be5c2249171cda0
-  FirebaseMessaging: c9ec7b90c399c7a6100297e9d16f8a27fc7f7152
+  Firebase: d80354ed7f6df5f9aca55e9eb47cc4b634735eaf
+  firebase_core: 8d552814f6c01ccde5d88939fced4ec26f2f5510
+  firebase_messaging: 8b96a4f09841c15a16b96973ef5c3dcfc1a064e4
+  FirebaseCore: 99fe0c4b44a39f37d99e6404e02009d2db5d718d
+  FirebaseCoreInternal: df24ce5af28864660ecbd13596fc8dd3a8c34629
+  FirebaseInstallations: 6c963bd2a86aca0481eef4f48f5a4df783ae5917
+  FirebaseMessaging: 487b634ccdf6f7b7ff180fdcb2a9935490f764e8
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
-  flutter_localization: f43b18844a2b3d2c71fd64f04ffd6b1e64dd54d4
-  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  flutter_local_notifications: a5a732f069baa862e728d839dd2ebb904737effb
+  flutter_localization: 72299fb6cb4e51cae587bd953ed0b958040b71e6
+  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
-  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
-  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
+  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
 
 PODFILE CHECKSUM: 3f3697c847c52bb2f1c7146b71ef2faef67d110f
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

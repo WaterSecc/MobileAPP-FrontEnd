@@ -8,6 +8,7 @@ import 'package:theme_provider/theme_provider.dart';
 import 'package:watersec_mobileapp_front/Localization/locales.dart';
 import 'package:watersec_mobileapp_front/View/analyses_screen.dart';
 import 'package:watersec_mobileapp_front/View/changepassword_screen.dart';
+import 'package:watersec_mobileapp_front/View/components/profile_dropdownmenu.dart';
 import 'package:watersec_mobileapp_front/View/dash2.dart';
 import 'package:watersec_mobileapp_front/View/dashboardplus_screen.dart';
 import 'package:watersec_mobileapp_front/View/forgotpwd_screen.dart';
@@ -44,6 +45,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterLocalization.instance.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -250,6 +252,7 @@ class _MyAppState extends State<MyApp> {
       child: ThemeConsumer(
         child: Builder(builder: (themeContext) {
           return MaterialApp(
+            navigatorObservers: [routeObserver],
             debugShowCheckedModeBanner: false,
             supportedLocales: localization.supportedLocales,
             localizationsDelegates: localization.localizationsDelegates,

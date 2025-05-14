@@ -84,483 +84,317 @@ class _Dashboard2State extends State<Dashboard2> {
   Widget build(BuildContext context) {
     final dashboardViewModel = context.watch<DashboardViewModel>();
     final dayperiodViewModel = context.watch<DayPeriodConsumptionViewModel>();
-
-    bool _isLoading = dashboardViewModel.currentWaterConsumption == 0 &&
-        dashboardViewModel.quarterWaterConsumption == 0 &&
-        dayperiodViewModel.total == 0;
-
-    // Check if the selectedWaterMeterIds list has more than one meter or none
     final waterMetersViewModel = context.watch<WaterMetersViewModel>();
     bool showCircularIndicator =
         waterMetersViewModel.selectedMeterIds.length == 1;
 
-    return Container(
-      child: Scaffold(
-        drawer: MyDrawer(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: MyAppBar(page: AppLocale.Dashboard.getString(context)),
-        ),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            await dashboardViewModel.fetchDailyWaterConsumption(context);
-            await dashboardViewModel.fetchQuarterWaterConsumption(context);
-            await dashboardViewModel.fetchInvoices(context);
-            await dayperiodViewModel.fetchDayPeriodConsumption();
-          },
-          child: Skeletonizer(
-            enabled: _isLoading,
-            ignoreContainers: true,
-            child: SingleChildScrollView(
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 25,
-                      right: 30,
-                      child: Center(
-                        child: Container(
-                            child: SfCircularChart(
-                          series: <CircularSeries>[
-                            DoughnutSeries<ChartData, String>(
-                              dataSource: dayperiodViewModel.total == 0
-                                  ? [
-                                      ChartData('', 100, gray),
-                                    ]
-                                  : _createSeriesList(dayperiodViewModel),
-                              xValueMapper: (ChartData data, _) => data.name,
-                              yValueMapper: (ChartData data, _) => data.value,
-                              cornerStyle: CornerStyle.bothFlat,
-                              radius: '100%',
-                              innerRadius: '87%',
-                              pointColorMapper: (ChartData data, _) =>
-                                  data.color,
-                            ),
-                          ],
-                        )),
-                      ),
-                    ),
-                    Positioned(
-                      top: 60,
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 110),
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 100,
+    final isLoading =
+        dashboardViewModel.isLoading || dayperiodViewModel.isLoading;
+
+    final width = MediaQuery.of(context).size.width;
+    final chartSize = width * 0.75;
+    final boxWidth = width * 0.85;
+    final boxHeight = 110.0;
+
+    return Scaffold(
+      drawer: MyDrawer(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: MyAppBar(page: AppLocale.Dashboard.getString(context)),
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await dashboardViewModel.fetchDailyWaterConsumption(context);
+          await dashboardViewModel.fetchQuarterWaterConsumption(context);
+          await dashboardViewModel.fetchInvoices(context);
+          await dayperiodViewModel.fetchDayPeriodConsumption();
+        },
+        child: Skeletonizer(
+          enabled: isLoading,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Column(
+                children: [
+                  Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: chartSize,
+                          height: chartSize,
+                          child: SfCircularChart(
+                            margin: EdgeInsets.zero,
+                            series: <CircularSeries>[
+                              DoughnutSeries<ChartData, String>(
+                                dataSource: dayperiodViewModel.total == 0
+                                    ? [
+                                        ChartData('', 100, gray),
+                                      ]
+                                    : _createSeriesList(dayperiodViewModel),
+                                xValueMapper: (ChartData data, _) => data.name,
+                                yValueMapper: (ChartData data, _) => data.value,
+                                cornerStyle: CornerStyle.bothFlat,
+                                radius: '100%',
+                                innerRadius: '87%',
+                                pointColorMapper: (ChartData data, _) =>
+                                    data.color,
                               ),
-                              Text(
-                                dayperiodViewModel.total.toStringAsFixed(2) +
-                                    ' L',
-                                style: TextStyles.Header22Style(
-                                  Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: blue,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    AppLocale.Froid.getString(context) +
-                                        ': ' +
-                                        _getColdConsumption(dayperiodViewModel)
-                                            .toStringAsFixed(2) +
-                                        'L',
-                                    style: TextStyles.subtitle6Style(
-                                      Theme.of(context).colorScheme.secondary,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: red,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    AppLocale.Chaud.getString(context) +
-                                        ': ' +
-                                        _getHotConsumption(dayperiodViewModel)
-                                            .toStringAsFixed(2) +
-                                        'L',
-                                    style: TextStyles.subtitle6Style(
-                                      Theme.of(context).colorScheme.secondary,
-                                    ),
-                                  ),
-                                ],
-                              )
                             ],
                           ),
                         ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 280,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 83),
-                        child: Row(
+                        Column(
                           children: [
-                            Container(
-                              padding: EdgeInsets.only(
-                                top: 70,
+                            Text(
+                              "${dayperiodViewModel.total.toStringAsFixed(2)} L",
+                              style: TextStyles.Header22Style(
+                                Theme.of(context).colorScheme.secondary,
                               ),
-                              child: Icon(
-                                dashboardViewModel.waterConsumptionPercentage
-                                        .toString()
-                                        .startsWith('-')
-                                    ? Icons.arrow_downward_sharp
-                                    : Icons.arrow_upward_sharp,
-                                color: dashboardViewModel
-                                        .waterConsumptionPercentage
-                                        .toString()
-                                        .startsWith('-')
-                                    ? green
-                                    : red,
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildIndicator(blue,
+                                    "${AppLocale.Froid.getString(context)}: ${_getColdConsumption(dayperiodViewModel)
+                                            .toStringAsFixed(2)}L"),
+                                SizedBox(width: 15),
+                                _buildIndicator(red,
+                                    "${AppLocale.Chaud.getString(context)}: ${_getHotConsumption(dayperiodViewModel)
+                                            .toStringAsFixed(2)}L"),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        dashboardViewModel.waterConsumptionPercentage < 0
+                            ? Icons.arrow_downward
+                            : Icons.arrow_upward,
+                        color: dashboardViewModel.waterConsumptionPercentage < 0
+                            ? green
+                            : red,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        "${dashboardViewModel.waterConsumptionPercentage.toStringAsFixed(1)}% ${AppLocale.Moyenne.getString(context)}",
+                        style: TextStyles.subtitle3Style(
+                          Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  _buildBox(
+                    width: boxWidth,
+                    height: boxHeight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            AppLocale.Fees.getString(context),
+                            style: TextStyles.Header3_Style(
+                                Theme.of(context).colorScheme.secondary),
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          "Total: ${dashboardViewModel.totalAmount.toStringAsFixed(2)} TND",
+                          style: TextStyles.subtitle2Style(
+                            Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "SONEDE: ${dashboardViewModel.sonedeAmount.toStringAsFixed(2)} TND",
+                              style: TextStyles.subtitle5Style(
+                                Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                             SizedBox(
-                              width: 4,
+                              width: 6,
                             ),
-                            Container(
-                              padding: EdgeInsets.only(top: 70),
-                              child: Text(
-                                dashboardViewModel.waterConsumptionPercentage
-                                        .toString() +
-                                    '% ' +
-                                    AppLocale.Moyenne.getString(context),
-                                style: TextStyles.subtitle3Style(
-                                  Theme.of(context).colorScheme.secondary,
-                                ),
+                            Text(
+                              "ONAS: ${dashboardViewModel.onasAmount.toStringAsFixed(2)} TND",
+                              style: TextStyles.subtitle5Style(
+                                Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                           ],
                         ),
-                      ),
+                      ],
                     ),
-                    Positioned(
-                      top: 385,
-                      left: 25,
-                      child: SizedBox(
-                        width: 340,
-                        height: 100,
-                        child: Container(
-                          margin: EdgeInsets.only(top: 10, right: 7, left: 7),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  SizedBox(height: 12),
+                  _buildBox(
+                    width: boxWidth,
+                    height: boxHeight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocale.ConsommationTrim.getString(context),
+                          style: TextStyles.subtitle3Style(
+                              Theme.of(context).colorScheme.secondary),
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Icon(
+                              dashboardViewModel
+                                          .quarterwaterConsumptionPercentage <
+                                      0
+                                  ? Icons.arrow_downward
+                                  : Icons.arrow_upward,
+                              size: 14,
+                              color: dashboardViewModel
+                                          .quarterwaterConsumptionPercentage <
+                                      0
+                                  ? green
+                                  : red,
                             ),
-                            borderRadius: BorderRadius.all(Radius.circular(9)),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                AppLocale.Fees.getString(context),
-                                style: TextStyles.Header3_Style(
-                                  Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 21, right: 90),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      AppLocale.FraisT.getString(context),
-                                      style: TextStyles.subtitle2Style(
-                                        Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      dashboardViewModel.totalAmount
-                                              .toStringAsFixed(3) +
-                                          ' TND',
-                                      style: TextStyles.subtitle2Style(
-                                        Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 17, top: 5),
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    Text(
-                                      AppLocale.FraisS.getString(context),
-                                      style: TextStyles.subtitle5Style(
-                                        Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 3,
-                                    ),
-                                    Text(
-                                      dashboardViewModel.sonedeAmount
-                                              .toStringAsFixed(3) +
-                                          ' TND',
-                                      style: TextStyles.subtitle5Style(
-                                        Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 19,
-                                    ),
-                                    Text(
-                                      AppLocale.FraisO.getString(context),
-                                      style: TextStyles.subtitle5Style(
-                                        Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 3,
-                                    ),
-                                    Text(
-                                      dashboardViewModel.onasAmount
-                                              .toStringAsFixed(3) +
-                                          ' TND',
-                                      style: TextStyles.subtitle5Style(
-                                        Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                            SizedBox(width: 4),
+                            Text(
+                              "${dashboardViewModel.quarterwaterConsumptionPercentage.toStringAsFixed(1)}% ${AppLocale.Moyenne.getString(context)}",
+                              style: TextStyles.subtitle4Style(
+                                  Theme.of(context).colorScheme.secondary),
+                            ),
+                          ],
+                        ),
+                        Center(
+                          child: Text(
+                            "${dashboardViewModel.quarterWaterConsumption.toStringAsFixed(2)} L",
+                            style: TextStyles.Header1Style(
+                                Theme.of(context).colorScheme.secondary),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                    Positioned(
-                      top: 490,
-                      left: 25,
-                      child: SizedBox(
-                        width: 340,
-                        height: 100,
-                        child: Container(
-                          margin: EdgeInsets.only(top: 10, right: 7, left: 7),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 30,
+                      ),
+                      if (showCircularIndicator)
+                        SizedBox(
+                          width: 95,
+                          height: 95,
+                          child: LiquidCircularProgressIndicator(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.background,
+                            borderColor: blue,
+                            borderWidth: 2,
+                            value: dashboardViewModel.consumptionPercentLevel
+                                    .toDouble() /
+                                100.0,
+                            valueColor: AlwaysStoppedAnimation(blue),
+                            center: Text(
+                              '  ' +
+                                  dashboardViewModel.consumptionPercentLevel
+                                      .toInt()
+                                      .toString() +
+                                  '%\n' +
+                                  AppLocale.Level.getString(context) +
+                                  ' ' +
+                                  dashboardViewModel.consumptionLevel
+                                      .toInt()
+                                      .toString(),
+                              style: TextStyles.palierStyle(
+                                Theme.of(context).colorScheme.secondary,
+                              ),
                             ),
-                            borderRadius: BorderRadius.all(Radius.circular(9)),
                           ),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 6,
+                        ),
+                      SizedBox(width: 12),
+                      _buildBox(
+                        width: width * 0.57,
+                        height: boxHeight,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: MyTxtBtnNotOutlined(
+                                text: AppLocale.PlusDetails.getString(context),
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, '/dashboardplus');
+                                },
                               ),
-                              Text(
-                                AppLocale.ConsommationTrim.getString(context),
-                                style: TextStyles.subtitle3Style(
-                                  Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 10,
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    child: Icon(
-                                      dashboardViewModel
-                                              .quarterwaterConsumptionPercentage
-                                              .toString()
-                                              .startsWith('-')
-                                          ? Icons.arrow_downward_sharp
-                                          : Icons.arrow_upward_sharp,
-                                      color: dashboardViewModel
-                                              .quarterwaterConsumptionPercentage
-                                              .toString()
-                                              .startsWith('-')
-                                          ? green
-                                          : red,
-                                      size: 10,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Container(
-                                    child: Text(
-                                      dashboardViewModel
-                                              .quarterwaterConsumptionPercentage
-                                              .toString()
-                                              .toString() +
-                                          '% ' +
-                                          AppLocale.Moyenne.getString(context),
-                                      style: TextStyles.subtitle4Style(
-                                        Theme.of(context).colorScheme.secondary,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  )
-                                ],
-                              ),
-                              Center(
-                                child: Text(
-                                  dashboardViewModel.quarterWaterConsumption
-                                          .toString() +
-                                      'L',
-                                  style: TextStyles.Header1Style(
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "${hourFormat.format(currentTime)} ${amPmFormat.format(currentTime)}",
+                                  style: TextStyles.subtitle5Style(
                                     Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Conditional rendering of the LiquidCircularProgressIndicator
-                    if (showCircularIndicator)
-                      Positioned(
-                        top: 595,
-                        left: 25,
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              top: 10, right: 10, left: 10, bottom: 10),
-                          child: SizedBox(
-                            width: 95,
-                            height: 95,
-                            child: LiquidCircularProgressIndicator(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.background,
-                              borderColor: blue,
-                              borderWidth: 2,
-                              value: dashboardViewModel.consumptionPercentLevel
-                                      .toDouble() /
-                                  100.0,
-                              valueColor: AlwaysStoppedAnimation(blue),
-                              center: Text(
-                                '  ' +
-                                    dashboardViewModel.consumptionPercentLevel
-                                        .toInt()
-                                        .toString() +
-                                    '%\n' +
-                                    AppLocale.Level.getString(context) +
-                                    ' ' +
-                                    dashboardViewModel.consumptionLevel
-                                        .toInt()
-                                        .toString(),
-                                style: TextStyles.palierStyle(
-                                  Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    Positioned(
-                      top: 595,
-                      left: 135,
-                      child: SizedBox(
-                        width: 230,
-                        height: 100,
-                        child: Container(
-                            margin: EdgeInsets.only(top: 10, right: 7, left: 7),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(9)),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(left: 5),
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: SizedBox(
-                                          height: 40,
-                                          child: MyTxtBtnNotOutlined(
-                                            text:
-                                                AppLocale.PlusDetails.getString(
-                                                    context),
-                                            onPressed: () {
-                                              Navigator.pushNamed(
-                                                  context, '/dashboardplus');
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                      child: Text(
-                                        '${hourFormat.format(currentTime)} ${amPmFormat.format(currentTime)}',
-                                        style: TextStyles.subtitle5Style(
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 20),
-                                      child: Icon(
-                                        Icons.bar_chart_sharp,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                      ),
-                                    ),
-                                  ],
+                                Icon(
+                                  Icons.bar_chart_sharp,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ],
-                            )),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildBox(
+      {required double width, required double height, required Widget child}) {
+    return Container(
+      width: width,
+      height: height,
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildIndicator(Color color, String label) {
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyles.subtitle6Style(
+            Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+      ],
     );
   }
 }

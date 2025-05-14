@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRCodeScannerButton extends StatefulWidget {
   @override
@@ -7,7 +7,7 @@ class QRCodeScannerButton extends StatefulWidget {
 }
 
 class _QRCodeScannerButtonState extends State<QRCodeScannerButton> {
-  QRViewController? _controller;
+  /*QRViewController? _controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   @override
@@ -24,30 +24,30 @@ class _QRCodeScannerButtonState extends State<QRCodeScannerButton> {
       print('Scanned QR code: ${scanData.code}');
       // Handle the scanned QR code here
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: () {
-            _scanQRCode(context);
+          onPressed: () {/*
+            _scanQRCode(context);*/
           },
           child: Text('Scan QR Code'),
         ),
         SizedBox(height: 16),
-        Expanded(
+       /* Expanded(
           child: QRView(
             key: qrKey,
             onQRViewCreated: _onQRViewCreated,
           ),
-        ),
+        ),*/
       ],
     );
   }
 
-  Future<void> _scanQRCode(BuildContext context) async {
+ /*Future<void> _scanQRCode(BuildContext context) async {
     if (_controller != null) {
       try {
         await _controller!.toggleFlash();
@@ -55,5 +55,5 @@ class _QRCodeScannerButtonState extends State<QRCodeScannerButton> {
         print('Failed to toggle flash: $e');
       }
     }
-  }
+  }*/
 }
