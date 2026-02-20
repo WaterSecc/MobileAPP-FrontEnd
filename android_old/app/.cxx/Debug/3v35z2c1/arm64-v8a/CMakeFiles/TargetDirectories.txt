@@ -1,0 +1,2 @@
+/Users/azizataboubi/Desktop/WaterSecFrontEnd/watersec_mobileapp_front/android/app/.cxx/Debug/3v35z2c1/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/azizataboubi/Desktop/WaterSecFrontEnd/watersec_mobileapp_front/android/app/.cxx/Debug/3v35z2c1/arm64-v8a/CMakeFiles/rebuild_cache.dir
