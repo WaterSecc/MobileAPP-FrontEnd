@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -49,16 +50,16 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBh1711Q6fXOI1dqyjwGWDvly-woSeEcys',
+  static FirebaseOptions get android => FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_ANDROID_API_KEY'] ?? '',
     appId: '1:367471936568:android:961063f05e6a204fb092cd',
     messagingSenderId: '367471936568',
     projectId: 'watersec-83dd2',
     storageBucket: 'watersec-83dd2.appspot.com',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDXMfUlJlJFOFOjeBYZ2Pvs1CfeCUmEQzc',
+  static FirebaseOptions get ios => FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_IOS_API_KEY'] ?? '',
     appId: '1:367471936568:ios:815cc050d5dea38bb092cd',
     messagingSenderId: '367471936568',
     projectId: 'watersec-83dd2',
